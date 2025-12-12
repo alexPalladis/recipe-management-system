@@ -5,7 +5,7 @@ import com.recipeapp.recipemanagementsystem.enums.RecipeCategory;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class RecipeDTO {
+public class RecipeDto {
 
     private Long id;
     private String name;
@@ -16,12 +16,12 @@ public class RecipeDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private List<StepDTO> steps;
-    private List<RecipeIngredientDTO> recipeIngredients;
-    private List<PhotoDTO> photos;
+    private List<StepDto> steps;
+    private List<RecipeIngredientDto> recipeIngredients;
+    private List<PhotoDto> photos;
 
     // Default constructor
-    public RecipeDTO() {}
+    public RecipeDto() {}
 
     // Getters
     public Long getId() { return id; }
@@ -32,9 +32,9 @@ public class RecipeDTO {
     public String getDescription() { return description; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public List<StepDTO> getSteps() { return steps; }
-    public List<RecipeIngredientDTO> getRecipeIngredients() { return recipeIngredients; }
-    public List<PhotoDTO> getPhotos() { return photos; }
+    public List<StepDto> getSteps() { return steps; }
+    public List<RecipeIngredientDto> getRecipeIngredients() { return recipeIngredients; }
+    public List<PhotoDto> getPhotos() { return photos; }
 
     // Setters
     public void setId(Long id) { this.id = id; }
@@ -45,7 +45,7 @@ public class RecipeDTO {
     public void setDescription(String description) { this.description = description; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-    public void setSteps(List<StepDTO> steps) { this.steps = steps; }
-    public void setRecipeIngredients(List<RecipeIngredientDTO> recipeIngredients) { this.recipeIngredients = recipeIngredients; }
-    public void setPhotos(List<PhotoDTO> photos) { this.photos = photos; }
+    public void setSteps(List<StepDto> steps) { this.steps = steps; }
+    public void setRecipeIngredients(List<RecipeIngredientDto> recipeIngredients) { this.recipeIngredients = recipeIngredients; }
+    public void setPhotos(List<PhotoDto> photos) { this.photos = photos; }
 }

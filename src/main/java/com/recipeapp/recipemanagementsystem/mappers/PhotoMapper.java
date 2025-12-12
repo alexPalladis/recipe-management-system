@@ -8,8 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PhotoMapper {
 
-    @Mapping(target = "recipe", ignore = true)
-    @Mapping(target = "step", ignore = true)
+
     PhotoDto toDTO(Photo photo);
 
     @Mapping(target = "recipe", ignore = true)

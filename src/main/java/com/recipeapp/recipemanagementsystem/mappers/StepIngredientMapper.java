@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {IngredientMapper.class})
 public interface StepIngredientMapper {
 
-    @Mapping(target = "step", ignore = true)
+
     StepIngredientDto toDTO(StepIngredient stepIngredient);
 
     @Mapping(target = "step", ignore = true)

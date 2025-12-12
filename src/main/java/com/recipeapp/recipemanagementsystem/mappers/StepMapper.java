@@ -8,9 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {StepIngredientMapper.class, PhotoMapper.class})
 public interface StepMapper {
 
-    @Mapping(target = "recipe", ignore = true)
     StepDto toDTO(Step step);
 
-    @Mapping(target = "recipe", ignore = true)
     Step toEntity(StepDto stepDTO);
 }

@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {IngredientMapper.class})
 public interface RecipeIngredientMapper {
 
-    @Mapping(target = "recipe", ignore = true)
     RecipeIngredientDto toDTO(RecipeIngredient recipeIngredient);
 
     @Mapping(target = "recipe", ignore = true)
