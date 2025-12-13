@@ -1,8 +1,12 @@
 package com.recipeapp.recipemanagementsystem.services.impl;
 
 import com.recipeapp.recipemanagementsystem.dtos.RecipeDto;
+import com.recipeapp.recipemanagementsystem.dtos.RecipeIngredientDto;
 import com.recipeapp.recipemanagementsystem.entities.Recipe;
+import com.recipeapp.recipemanagementsystem.entities.Ingredient;
+import com.recipeapp.recipemanagementsystem.entities.RecipeIngredient;
 import com.recipeapp.recipemanagementsystem.enums.Difficulty;
+import com.recipeapp.recipemanagementsystem.enums.MeasurementUnit;
 import com.recipeapp.recipemanagementsystem.enums.RecipeCategory;
 import com.recipeapp.recipemanagementsystem.mappers.RecipeMapper;
 import com.recipeapp.recipemanagementsystem.repositories.RecipeRepository;
@@ -11,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +36,12 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public RecipeDto createRecipe(RecipeDto recipeDto) {
         Recipe recipe = recipeMapper.toEntity(recipeDto);
+        if (recipe.getCreatedAt() == null) {
+            recipe.setCreatedAt(LocalDateTime.now());
+        }
+        if (recipe.getUpdatedAt() == null) {
+            recipe.setUpdatedAt(LocalDateTime.now());
+        }
         Recipe savedRecipe = recipeRepository.save(recipe);
         return recipeMapper.toDTO(savedRecipe);
     }

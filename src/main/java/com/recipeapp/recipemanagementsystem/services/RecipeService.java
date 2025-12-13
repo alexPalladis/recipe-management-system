@@ -1,6 +1,7 @@
 package com.recipeapp.recipemanagementsystem.services;
 
 import com.recipeapp.recipemanagementsystem.dtos.RecipeDto;
+import com.recipeapp.recipemanagementsystem.dtos.RecipeIngredientDto;
 import com.recipeapp.recipemanagementsystem.enums.Difficulty;
 import com.recipeapp.recipemanagementsystem.enums.RecipeCategory;
 

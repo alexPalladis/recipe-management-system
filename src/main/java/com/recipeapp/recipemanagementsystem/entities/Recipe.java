@@ -149,6 +149,12 @@ public class Recipe {
         this.photos = photos;
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
     // Update timestamp method
     @PreUpdate
     public void preUpdate() {

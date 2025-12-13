@@ -9,6 +9,7 @@ public class StepDto {
     private String description;
     private Integer stepOrder;
     private Integer duration;
+    private Long recipeId;
 
     private List<StepIngredientDto> stepIngredients;
     private List<PhotoDto> photos;
@@ -64,5 +65,13 @@ public class StepDto {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public Long getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(Long recipeId) {
+        this.recipeId = recipeId;
     }
 }

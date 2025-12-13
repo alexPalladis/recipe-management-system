@@ -17,13 +17,13 @@ public class Photo {
     private String mimeType;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] imageData;
 
     @Column(length = 500)
     private String description;
 
-    // Relationships - Μια φωτογραφία μπορεί να ανήκει είτε σε Recipe είτε σε RecipeStep
+    // Relationships - Μια φωτογραφία μπορεί να ανήκει είτε σε Recipe είτε σε Step
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;

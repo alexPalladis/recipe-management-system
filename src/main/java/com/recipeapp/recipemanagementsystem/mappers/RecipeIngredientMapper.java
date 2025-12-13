@@ -1,15 +1,18 @@
 package com.recipeapp.recipemanagementsystem.mappers;
-
 import com.recipeapp.recipemanagementsystem.dtos.RecipeIngredientDto;
 import com.recipeapp.recipemanagementsystem.entities.RecipeIngredient;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {IngredientMapper.class})
+@Mapper(componentModel = "spring")
 public interface RecipeIngredientMapper {
 
-    RecipeIngredientDto toDTO(RecipeIngredient recipeIngredient);
+    @Mapping(source = "recipe.id", target = "recipeId")
+    @Mapping(source = "ingredient.id", target = "ingredientId")
+    RecipeIngredientDto toDto(RecipeIngredient recipeIngredient);
 
     @Mapping(target = "recipe", ignore = true)
-    RecipeIngredient toEntity(RecipeIngredientDto recipeIngredientDTO);
+    @Mapping(target = "ingredient", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    RecipeIngredient toEntity(RecipeIngredientDto recipeIngredientDto);
 }
