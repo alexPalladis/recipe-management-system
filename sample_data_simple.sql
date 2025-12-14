@@ -42,6 +42,8 @@ FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
 FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
 
 INSERT INTO ingredients (id, name, description, created_at, updated_at) VALUES
 (1, 'Ντομάτα', 'Φρέσκια κόκκινη ντομάτα', NOW(), NOW()),
