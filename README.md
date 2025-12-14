@@ -78,7 +78,7 @@ If you're integrating with this API:
 
 ---
 
-# Validation
+# 🔒Validation
 
 ### Recipe (Συνταγή):
 - Name: Υποχρεωτικό, 2-30 χαρακτήρες
@@ -130,4 +130,74 @@ curl -X POST http://localhost:8080/api/recipes \
 ```
 
 This will trigger validation errors for the invalid fields.
+
+# 🔴Error Handling
+
+###  **Exception Classes:**
+- **ResourceNotFoundException** - Για 404 errors (δεν βρέθηκε)
+- **BadRequestException** - Για 400 errors (λανθασμένο αίτημα)
+
+###  **GlobalExceptionHandler:**
+Χειρίζεται όλους τους τύπους σφαλμάτων:
+
+#### 1. **Validation Errors (400)**
+- `MethodArgumentNotValidException` - από @Valid στα DTOs
+- `ConstraintViolationException` - από @NotNull, @Positive στους controllers
+- Μήνυμα: "Αποτυχία Επικύρωσης"
+
+#### 2. **File Upload Errors (413)**  
+- `MaxUploadSizeExceededException` - πολύ μεγάλο αρχείο
+- Μήνυμα: "Το μέγεθος του αρχείου υπερβαίνει το μέγιστο επιτρεπτό όριο"
+
+#### 3. **Type Mismatch Errors (400)**
+- `MethodArgumentTypeMismatchException` - λάθος τύπος δεδομένων
+- Μήνυμα: "Άκυρη τιμή 'X' για την παράμετρο 'Y'. Αναμενόμενος τύπος: Z"
+
+#### 4. **Custom Validation Errors (400)**
+- `IllegalArgumentException` - από τη custom validation στα photos
+- Μήνυμα: "Λανθασμένη Παράμετρος"
+
+#### 5. **Resource Not Found (404)**
+- `ResourceNotFoundException` - όταν δεν βρίσκεται κάτι
+- Μήνυμα: "Δεν Βρέθηκε"
+
+#### 6. **Generic Errors (500)**
+- `Exception` - για όλα τα άλλα σφάλματα
+- Μήνυμα: "Εσωτερικό Σφάλμα Διακομιστή"
+
+###  **Standardized Error Response:**
+
+```json
+{
+  "timestamp": "2024-12-14T15:30:45",
+  "status": 400,
+  "error": "Αποτυχία Επικύρωσης",
+  "message": "Παρασχέθηκαν άκυρα δεδομένα",
+  "path": "/api/recipes",
+  "validationErrors": [
+    {
+      "field": "name",
+      "rejectedValue": "",
+      "message": "Το όνομα της συνταγής είναι υποχρεωτικό"
+    },
+    {
+      "field": "totalDuration",
+      "rejectedValue": -5,
+      "message": "Η συνολική διάρκεια πρέπει να είναι τουλάχιστον 1 λεπτό"
+    }
+  ]
+}
+```
+
+###  **Test Error Handling:**
+
+```bash
+# Test validation error
+curl -X POST http://localhost:8080/api/recipes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "",
+    "totalDuration": -5
+  }'
+```
 
