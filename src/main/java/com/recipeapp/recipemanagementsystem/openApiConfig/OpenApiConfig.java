@@ -1,0 +1,27 @@
+package com.recipeapp.recipemanagementsystem.openApiConfig;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.License;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Recipe Management System API")
+                        .version("1.0.0")
+                        .description("API for managing recipes, ingredients, steps, photos, and recipe execution")
+                        .contact(new Contact()
+                                .name("Recipe App Team")
+                                .email("alexandrospalladis@gmail.com"))
+                        .license(new License()
+                                .name("MIT")
+                                .url("https://opensource.org/licenses/MIT")));
+    }
+}
