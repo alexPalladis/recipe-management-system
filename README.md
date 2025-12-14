@@ -77,3 +77,57 @@ If you're integrating with this API:
 - CORS is configured for development
 
 ---
+
+# Validation
+
+### Recipe (Συνταγή):
+- Name: Υποχρεωτικό, 2-30 χαρακτήρες
+- Difficulty: Υποχρεωτικό
+- Duration: Υποχρεωτικό, 1-1440 λεπτά
+- Category: Υποχρεωτικό
+- Description: Προαιρετικό, μέγιστο 500 χαρακτήρες
+
+### Step (Βήμα):
+- Title: Υποχρεωτικό, 2-100 χαρακτήρες
+- Description: Υποχρεωτικό, 5-500 χαρακτήρες
+- Order: Υποχρεωτικό, ελάχιστο 1
+- Duration: Υποχρεωτικό, 1-480 λεπτά
+
+### Ingredient (Υλικό):
+- Name: Υποχρεωτικό, 2-40 χαρακτήρες
+- Description: Προαιρετικό, μέγιστο 200 χαρακτήρες
+
+### StepIngredient (Υλικό Βήματος):
+- Quantity: Υποχρεωτικό, μεταξύ 1 και 10000
+- MeasurementUnit: Υποχρεωτικό
+- StepId: Υποχρεωτικό
+- IngredientId: Υποχρεωτικό
+
+### RecipeIngredient (Υλικό Συνταγής):
+- Quantity: Υποχρεωτικό, μεταξύ 1 και 10000
+- MeasurementUnit: Υποχρεωτικό
+- StepId: Υποχρεωτικό
+- IngredientId: Υποχρεωτικό
+
+### Photo (Φωτογραφία):
+- File name: Υποχρεωτικό, 1-200 χαρακτήρες
+- MIME type: Υποχρεωτικό, έγκυρη μορφή εικόνας
+- Image data: Υποχρεωτικό, 1 byte - 50MB
+
+
+## Test Validation:
+
+Send invalid data to see validation errors:
+
+```bash
+curl -X POST http://localhost:8080/api/recipes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "",
+    "totalDuration": -5,
+    "category": null
+  }'
+```
+
+This will trigger validation errors for the invalid fields.
+
