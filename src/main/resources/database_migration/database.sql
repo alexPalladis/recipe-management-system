@@ -14,7 +14,7 @@ total_time_minutes INT,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS recipe_steps (
+CREATE TABLE IF NOT EXISTS steps (
 id BIGINT AUTO_INCREMENT PRIMARY KEY,
 recipe_id BIGINT NOT NULL,
 step_order INT NOT NULL,
@@ -44,7 +44,7 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
-FOREIGN KEY (step_id) REFERENCES recipe_steps(id) ON DELETE CASCADE
+FOREIGN KEY (step_id) REFERENCES steps(id) ON DELETE CASCADE
 );
 
 
@@ -61,6 +61,6 @@ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 CREATE INDEX IF NOT EXISTS idx_recipe_name ON recipes(name);
 CREATE INDEX IF NOT EXISTS idx_recipe_category ON recipes(category);
 CREATE INDEX IF NOT EXISTS idx_recipe_difficulty ON recipes(difficulty);
-CREATE INDEX IF NOT EXISTS idx_step_recipe ON recipe_steps(recipe_id);
-CREATE INDEX IF NOT EXISTS idx_step_order ON recipe_steps(recipe_id, step_order);
+CREATE INDEX IF NOT EXISTS idx_step_recipe ON steps(recipe_id);
+CREATE INDEX IF NOT EXISTS idx_step_order ON steps(recipe_id, step_order);
 CREATE INDEX IF NOT EXISTS idx_ing_recipe ON recipe_ingredients(recipe_id);
