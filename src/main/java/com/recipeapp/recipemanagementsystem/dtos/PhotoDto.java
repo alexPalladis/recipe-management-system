@@ -1,11 +1,24 @@
 package com.recipeapp.recipemanagementsystem.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 public class PhotoDto {
 
     private Long id;
+    @NotBlank(message = "Το όνομα αρχείου είναι υποχρεωτικό")
+    @Size(min = 1, max = 200, message = "Το όνομα αρχείου πρέπει να είναι μεταξύ 1 και 200 χαρακτήρων")
     private String fileName;
+    @NotBlank(message = "Ο τύπος MIME είναι υποχρεωτικός")
+    @Pattern(regexp = "^image/(jpeg|jpg|png|gif|bmp|webp)$",
+            message = "Ο τύπος MIME πρέπει να είναι έγκυρη μορφή εικόνας")
     private String mimeType;
+    @NotNull(message = "Τα δεδομένα εικόνας είναι υποχρεωτικά")
+    @Size(min = 1, max = 52428800, message = "Τα δεδομένα εικόνας πρέπει να είναι μεταξύ 1 byte και 50MB")
     private byte[] imageData;
+    @Size(max = 200, message = "Η περιγραφή δεν μπορεί να υπερβαίνει τους 200 χαρακτήρες")
     private String description;
 
     public PhotoDto() {}

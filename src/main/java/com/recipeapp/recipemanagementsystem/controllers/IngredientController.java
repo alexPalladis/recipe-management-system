@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class IngredientController {
     @PostMapping
     @Operation(summary = "Create a new ingredient")
     @ApiResponse(responseCode = "200", description = "Ingredient created successfully")
-    public ResponseEntity<IngredientDto> createIngredient(@RequestBody IngredientDto ingredientDto) {
+    public ResponseEntity<IngredientDto> createIngredient(@Valid @RequestBody IngredientDto ingredientDto) {
         IngredientDto createdIngredient = ingredientService.createIngredient(ingredientDto);
         return ResponseEntity.ok(createdIngredient);
     }
@@ -35,7 +36,7 @@ public class IngredientController {
     @PutMapping
     @Operation(summary = "Update an existing ingredient")
     public ResponseEntity<IngredientDto> updateIngredient(@Parameter(description = "Ingredient ID") @RequestParam Long id,
-                                                          @RequestBody IngredientDto ingredientDto) {
+                                                          @Valid @RequestBody IngredientDto ingredientDto) {
         IngredientDto updatedIngredient = ingredientService.updateIngredient(id, ingredientDto);
         return ResponseEntity.ok(updatedIngredient);
     }

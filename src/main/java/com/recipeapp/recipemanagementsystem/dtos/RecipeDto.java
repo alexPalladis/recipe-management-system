@@ -2,16 +2,26 @@ package com.recipeapp.recipemanagementsystem.dtos;
 
 import com.recipeapp.recipemanagementsystem.enums.Difficulty;
 import com.recipeapp.recipemanagementsystem.enums.RecipeCategory;
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class RecipeDto {
 
     private Long id;
+    @NotBlank(message = "Το όνομα της συνταγής είναι υποχρεωτικό")
+    @Size(min = 2, max = 30, message = "Το όνομα της συνταγής πρέπει να είναι μεταξύ 2 και 30 χαρακτήρων")
     private String name;
+    @NotNull(message = "Ο βαθμός δυσκολίας είναι υποχρεωτικός")
     private Difficulty difficulty;
+    @NotNull(message = "Η συνολική διάρκεια είναι υποχρεωτική")
+    @Min(value = 1, message = "Η συνολική διάρκεια πρέπει να είναι τουλάχιστον 1 λεπτό")
+    @Max(value = 1440, message = "Η συνολική διάρκεια δεν μπορεί να υπερβαίνει τις 24 ώρες (1440 λεπτά)")
     private Integer totalDuration;
+    @NotNull(message = "Η κατηγορία συνταγής είναι υποχρεωτική")
     private RecipeCategory category;
+    @Size(max = 500, message = "Η περιγραφή δεν μπορεί να υπερβαίνει τους 500 χαρακτήρες")
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

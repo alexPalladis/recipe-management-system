@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class StepController {
     @PostMapping
     @Operation(summary = "Create a new step")
     @ApiResponse(responseCode = "200", description = "Step created successfully")
-    public ResponseEntity<StepDto> createStep(@RequestBody StepDto stepDto) {
+    public ResponseEntity<StepDto> createStep(@Valid @RequestBody StepDto stepDto) {
         StepDto createdStep = stepService.createStep(stepDto);
         return ResponseEntity.ok(createdStep);
     }
@@ -36,7 +37,7 @@ public class StepController {
     @PutMapping
     @Operation(summary = "Update an existing step")
     public ResponseEntity<StepDto> updateStep(@Parameter(description = "Step ID") @RequestParam Long id,
-                                              @RequestBody StepDto stepDto) {
+                                              @Valid @RequestBody StepDto stepDto) {
         StepDto updatedStep = stepService.updateStep(id, stepDto);
         return ResponseEntity.ok(updatedStep);
     }
