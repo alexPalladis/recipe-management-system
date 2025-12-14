@@ -1,4 +1,4 @@
-package com.recipeapp.recipemanagementsystem.openApiConfig;
+package com.recipeapp.recipemanagementsystem.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
