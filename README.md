@@ -1,3 +1,128 @@
+# Recipe Management System
+
+Σύστημα διαχείρισης συνταγών.
+
+## 📋 Απαιτήσεις Συστήματος
+
+- Java 17 ή νεότερη έκδοση
+- Maven 3.6+
+- Docker και Docker Compose
+
+## 🚀 Οδηγίες Εκτέλεσης
+
+### Βήμα 1: Αντιγραφή του Repository
+```bash
+git clone https://github.com/alexPalladis/recipe-management-system.git
+cd recipe-management-system
+```
+
+### Βήμα 2: Δημιουργία Αρχείων Ρυθμίσεων
+Αντιγράψτε τα template αρχεία για να δημιουργήσετε τις ρυθμίσεις:
+
+```bash
+# Αντιγραφή ρυθμίσεων βάσης δεδομένων
+cp docker-compose.yml.example docker-compose.yml
+
+# Αντιγραφή ρυθμίσεων εφαρμογής  
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+```
+
+### Βήμα 3: Εκκίνηση Βάσης Δεδομένων
+```bash
+docker-compose up -d
+```
+
+Περιμένετε 30-60 δευτερόλεπτα για να ξεκινήσει η MySQL. Μπορείτε να ελέγξετε την κατάσταση με:
+```bash
+docker ps
+```
+
+### Βήμα 4: Εκτέλεση της Εφαρμογής
+```bash
+mvn spring-boot:run
+```
+
+Περιμένετε μέχρι να δείτε το μήνυμα: "Started RecipeManagementSystemApplication"
+
+### Βήμα 5: Δοκιμή της Εφαρμογής
+Ανοίξτε έναν browser ή χρησιμοποιήστε curl:
+
+```bash
+# Δοκιμή API
+curl http://localhost:8080/api/recipes/all
+
+# Swagger UI (για εύκολη δοκιμή)
+Ανοίξτε: http://localhost:8080/swagger-ui.html
+```
+
+## 🚨 Αντιμετώπιση Προβλημάτων
+
+### "Connection refused" ή database errors:
+```bash
+# Ελέγξτε αν τρέχει η MySQL
+docker ps
+
+# Επανεκκίνηση αν χρειάζεται
+docker-compose restart
+
+# Δείτε τα logs της βάσης
+docker logs mysql-recipes
+```
+
+### "Port already in use":
+```bash
+# Δείτε τι χρησιμοποιεί την θύρα 3307
+lsof -i :3307
+
+# Ή σταματήστε άλλες MySQL instances
+sudo service mysql stop
+```
+
+### "Cannot resolve dependencies":
+```bash
+mvn clean install
+```
+
+## 📁 Δομή Project
+
+```
+src/
+├── main/
+│   ├── java/.../
+|   |   ├── config/          #Configuration files
+│   │   ├── controllers/     # REST API Controllers
+│   │   ├── dtos/           # Data Transfer Objects  
+│   │   ├── entities/       # Database Entities
+│   │   ├── enums/          # Enumerations
+│   │   ├── mappers/        # Mappers for Entities-Dtos
+│   │   ├── services/       # Business Logic
+│   │   ├── repositories/   # Data Access
+│   │   └── exceptions/     # Custom Exceptions
+│   └── resources/
+│       └── application.properties # Ρυθμίσεις εφαρμογής
+│       └── database_migration
+│   │    |  ├── database.sql    # Δειγματικά δεδομένα
+├── docker-compose.yml      # Ρυθμίσεις image MySQL
+```
+
+##  Επιβεβαίωση Επιτυχούς Εκτέλεσης
+
+Η εφαρμογή λειτουργεί σωστά όταν:
+- ✅ Το `docker ps` δείχνει τον mysql-recipes container
+- ✅ Το `mvn spring-boot:run` ξεκινάει χωρίς σφάλματα
+- ✅ Το `curl http://localhost:8080/api/recipes/all` επιστρέφει JSON
+- ✅ Το Swagger UI είναι προσβάσιμο στο http://localhost:8080/swagger-ui.html
+
+
+## Προβλήματα
+
+Αν αντιμετωπίζετε προβλήματα, ελέγξτε:
+1. Τα logs της εφαρμογής στο terminal
+2. Τα logs της MySQL: `docker logs mysql-recipes`
+3. Ότι οι θύρες 8080 και 3307 είναι ελεύθερες
+
+---
+
 ## 📚 API Documentation
 
 This project includes interactive API documentation using OpenAPI 3.0 (Swagger).
