@@ -123,6 +123,134 @@ src/
 
 ---
 
+# 🐳 Docker Desktop Εγκατάσταση για Windows
+
+Οδηγίες για εγκατάσταση Docker Desktop με WSL 2 backend στα Windows.
+
+## 📋 Απαιτήσεις
+
+- Windows 10 ή Windows 11
+- Διαθέσιμος χώρος: ~2GB για Docker Desktop + WSL
+- Administrator privileges
+
+## 🚀 Εγκατάσταση
+
+### Βήμα 1: Εγκατάσταση WSL 2
+1. **Ανοίξτε PowerShell ως Administrator**
+   - Πατήστε `Win + X` → επιλέξτε **"Windows PowerShell (Admin)"**
+   - Ή: Start Menu → γράψτε "PowerShell" → Right-click → **"Run as administrator"**
+
+2. **Εκτελέστε μία εντολή:**
+   ```powershell
+   wsl --install
+   ```
+   
+   Αυτή η εντολή θα:
+   - ✅ Ενεργοποιήσει το WSL feature
+   - ✅ Εγκαταστήσει WSL 2 kernel  
+   - ✅ Κατεβάσει Ubuntu Linux
+
+3. **Επανεκκινήστε** όταν σας το ζητήσει
+
+### Βήμα 2: Έλεγχος WSL
+Μετά την επανεκκίνηση, ελέγξτε ότι δουλεύει:
+```powershell
+wsl --version
+```
+
+Θα πρέπει να δείτε κάτι σαν:
+```
+WSL version: 2.x.x.x
+Kernel version: 5.x.x
+```
+
+### Βήμα 3: Εγκατάσταση Docker Desktop
+
+1. **Κατέβασμα:**
+   - Πηγαίνετε στο: https://docs.docker.com/desktop/install/windows-install/
+   - Κλικ **"Download Docker Desktop for Windows"**
+
+2. **Εγκατάσταση:**
+   - Τρέξτε το installer (Docker Desktop Installer.exe)
+   - Στην οθόνη **"Configuration"** βεβαιωθείτε ότι είναι επιλεγμένο:
+     - ✅ **"Use WSL 2 instead of Hyper-V"**
+   - Κλικ **"Ok"** και περιμένετε την εγκατάσταση
+
+3. **Επανεκκίνηση:**
+   - Το installer θα σας ζητήσει logout
+   - Κάντε logout και login ξανά
+
+### Βήμα 4: Έναρξη Docker
+1. **Ανοίξτε Docker Desktop** από το Start Menu
+2. Περιμένετε να ξεκινήσει (2-3 λεπτά την πρώτη φορά)
+3. Θα δείτε: **"Docker Desktop is running"**
+
+### Βήμα 5: Δοκιμή
+Ανοίξτε Command Prompt ή PowerShell και δοκιμάστε:
+```cmd
+docker --version
+docker-compose --version
+```
+
+Θα πρέπει να δείτε:
+```
+Docker version 24.x.x
+Docker Compose version v2.x.x
+```
+
+## ✅ Επιτυχής Εγκατάσταση
+
+Η εγκατάσταση είναι επιτυχής όταν:
+- ✅ Το Docker Desktop ξεκινάει χωρίς σφάλματα
+- ✅ Οι εντολές `docker --version` λειτουργούν)
+
+## 🚨 Αντιμετώπιση Προβλημάτων
+
+### "WSL 2 is not installed" ή παρόμοια σφάλματα:
+```powershell
+# Εκτελέστε σε PowerShell ως Administrator:
+wsl --update
+wsl --set-default-version 2
+```
+
+### "Virtualization is not enabled":
+1. Κλείστε τον υπολογιστή εντελώς
+2. Κατά την εκκίνηση πατήστε `F2`, `F12`, ή `Delete` για να μπείτε στο BIOS
+3. Βρείτε "Virtualization Technology" ή "Intel VT-x" ή "AMD-V"
+4. Ενεργοποιήστε το (`Enabled`)
+5. Save & Exit από το BIOS
+
+### "Docker command not found":
+- Βεβαιωθείτε ότι το Docker Desktop τρέχει
+- Επανεκκινήστε το Command Prompt
+- Δοκιμάστε να κλείσετε και να ανοίξετε ξανά το Docker Desktop
+
+### "Docker Desktop won't start":
+1. Ελέγξτε: `wsl --list --verbose` (πρέπει να δείτε Ubuntu σε version 2)
+2. Στο Docker Desktop: Settings → General → **"Use the WSL 2 based engine"** ✅
+3. Apply & Restart
+
+### Χρήσιμες εντολές WSL:
+```powershell
+# Δείτε εγκατεστημένες distributions:
+wsl --list --verbose
+
+# Ξεκινήστε specific distribution:
+wsl -d Ubuntu
+
+# Ενημερώστε WSL:
+wsl --update
+```
+
+## 🎯 Επόμενα Βήματα
+
+Μετά την επιτυχή εγκατάσταση Docker:
+1. Συνεχίστε με την εγκατάσταση του recipe management project
+2. Χρησιμοποιήστε την εντολή `docker-compose up -d` για MySQL
+3. Τρέξτε την εφαρμογή με `mvn spring-boot:run`
+
+---
+
 ## 📚 API Documentation
 
 This project includes interactive API documentation using OpenAPI 3.0 (Swagger).
