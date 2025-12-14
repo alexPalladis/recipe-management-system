@@ -5,12 +5,13 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: YOUR_ROOT_PASSWORD
       MYSQL_DATABASE: recipesdb
-      MYSQL_USER: YOUR_DB_USERNAME
-      MYSQL_PASSWORD: YOUR_DB_PASSWORD
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
     ports:
       - "3306:3307"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./sample_data_simple.sql:/docker-entrypoint-initdb.d/01-init.sql
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
 
