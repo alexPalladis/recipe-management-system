@@ -1,12 +1,13 @@
 # Recipe Management System
 
-Σύστημα διαχείρισης συνταγών.
+Σύστημα διαχείρισης συνταγών με Spring Boot και MySQL.
 
 ## 📋 Απαιτήσεις Συστήματος
 
-- Java 17 ή νεότερη έκδοση
-- Maven 3.6+
-- Docker και Docker Compose
+- **Java 17** 
+- **Maven 3.9**
+- **Docker Desktop** (για Windows/Mac) ή **Docker Engine** (για Linux)
+- **Git**
 
 ## 🚀 Οδηγίες Εκτέλεσης
 
@@ -16,72 +17,202 @@ git clone https://github.com/alexPalladis/recipe-management-system.git
 cd recipe-management-system
 ```
 
-### Βήμα 2: Δημιουργία Αρχείων Ρυθμίσεων
-Αντιγράψτε τα template αρχεία για να δημιουργήσετε τις ρυθμίσεις:
+### Βήμα 2: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
+**ΠΡΟΣΟΧΗ: Αυτό το βήμα είναι ΥΠΟΧΡΕΩΤΙΚΟ!!**
+**Σε περίπτωση που δεν έχετε το Docker εγκατεστημένο, θα βρείτε σχετικές οδηγίες παρακάτω σε επόμενο κεφάλαιο.**
 
+#### Για Windows:
+1. **Ανοίξτε το Docker Desktop** από το Start Menu
+2. **Περιμένετε** μέχρι να εμφανιστεί το πράσινο εικονίδιο στο system tray
+3. **Επιβεβαιώστε** ότι είναι ενεργό: το Docker Desktop δείχνει "Docker Desktop is running"
+
+#### Για Mac:
+1. **Ανοίξτε το Docker Desktop** από το Applications folder
+2. **Περιμένετε** μέχρι το εικονίδιο στη μπάρα menu να γίνει πράσινο
+3. **Επιβεβαιώστε**: Κλικ στο εικονίδιο → "Docker Desktop is running"
+
+#### Για Linux:
 ```bash
-# Αντιγραφή ρυθμίσεων βάσης δεδομένων
-cp docker-compose.yml.example docker-compose.yml
+# Ξεκινήστε την υπηρεσία Docker
+sudo systemctl start docker
 
-# Αντιγραφή ρυθμίσεων εφαρμογής  
-cp src/main/resources/application.properties.example src/main/resources/application.properties
+# Επιβεβαιώστε ότι τρέχει
+sudo systemctl status docker
 ```
 
-### Βήμα 3: Εκκίνηση Βάσης Δεδομένων
+#### Δοκιμή Docker:
 ```bash
+# Αυτή η εντολή πρέπει να δουλέψει χωρίς σφάλματα
+docker --version
+docker-compose --version
+```
+
+### Βήμα 3: Δημιουργία Απαραίτητων Αρχείων Ρυθμίσεων
+
+**ΚΡΙΣΙΜΟ:** Αυτά τα αρχεία λείπουν επίτηδες από το repository για λόγους ασφαλείας!Γ' αυτό το λόγο υπάρχουν τα examples τους(application.properties.example και docker-compose.yml.example)
+
+#### 3.1 Δημιουργία docker-compose.yml
+**Δημιουργήστε** το αρχείο `docker-compose.yml` στoν root folder του project και επεξεργαστείτε μόνο τον κωδικό σας(< YOUR PASSWORD >):
+
+```yaml
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-recipes
+    environment:
+      MYSQL_ROOT_PASSWORD: <ΥΟUR PASSWORD>
+      MYSQL_DATABASE: recipesdb
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password --init-connect='SET NAMES utf8mb4'
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sample_data_simple.sql:/docker-entrypoint-initdb.d/01-init.sql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+```
+
+#### 3.2 Δημιουργία application.properties
+**Δημιουργήστε** το αρχείο `src/main/resources/application.properties ( όπως το appilaction.properties.example ) και επεξεργαστείτε μόνο τα πεδία < YOUR_USERNAME > και < YOUR PASSWORD >`:
+
+```properties
+# Application Configuration
+spring.application.name=Recipe Management System
+server.port=8080
+
+# Database Configuration
+spring.datasource.url=jdbc:mysql://localhost:3307/recipesdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
+spring.datasource.username=< YOUR_USERNAME >
+spring.datasource.password=< YOUR PASSWORD >
+
+# JPA/Hibernate Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+# JSON Configuration
+spring.jackson.serialization.fail-on-empty-beans=false
+spring.jackson.default-property-inclusion=NON_NULL
+
+# Logging Configuration
+logging.level.com.recipeapp=DEBUG
+logging.level.org.springframework.web=DEBUG
+logging.level.org.hibernate.SQL=DEBUG
+```
+
+### Βήμα 4: Εκκίνηση Βάσης Δεδομένων
+```bash
+# Ξεκινήστε τη MySQL με Docker Compose από το terminal του ΙDE στον root folder
 docker-compose up -d
-```
 
-Περιμένετε 30-60 δευτερόλεπτα για να ξεκινήσει η MySQL. Μπορείτε να ελέγξετε την κατάσταση με:
-```bash
+# Επιβεβαιώστε ότι τρέχει
 docker ps
 ```
 
-### Βήμα 4: Εκτέλεση της Εφαρμογής
+**Πρέπει να δείτε:**
+```
+CONTAINER ID   IMAGE       PORTS                    NAMES
+xxxxxxxxx      mysql:8.0   0.0.0.0:3307->3306/tcp   mysql-recipes
+```
+
+**Περιμένετε 30-60 δευτερόλεπτα** για να ξεκινήσει πλήρως η MySQL.
+
+#### Έλεγχος της Βάσης:
 ```bash
+# Δείτε τα logs της βάσης
+docker logs mysql-recipes
+
+# Πρέπει να δείτε κάτι σαν: "MySQL init process done. Ready for start up."
+```
+
+### Βήμα 5: Εκτέλεση της Εφαρμογής
+```bash
+# Εγκατάσταση dependencies και εκτέλεση
+mvn clean compile
 mvn spring-boot:run
 ```
 
-Περιμένετε μέχρι να δείτε το μήνυμα: "Started RecipeManagementSystemApplication"
+**Περιμένετε** μέχρι να δείτε το μήνυμα:
+```
+Started RecipeManagementSystemApplication in X.XXX seconds (process running on PID XXXX)
+```
 
-### Βήμα 5: Δοκιμή της Εφαρμογής
-Ανοίξτε έναν browser ή χρησιμοποιήστε curl:
+### Βήμα 6: Δοκιμή της Εφαρμογής
 
+#### Δοκιμή API:
 ```bash
-# Δοκιμή API
+# Δοκιμή βασικού endpoint
 curl http://localhost:8080/api/recipes/all
 
-# Swagger UI (για εύκολη δοκιμή)
-Ανοίξτε: http://localhost:8080/swagger-ui.html
+# Πρέπει να επιστρέψει JSON με συνταγές
 ```
 
-## 🚨 Αντιμετώπιση Προβλημάτων
+#### Swagger UI:
+**Ανοίξτε** στον browser: http://localhost:8080/swagger-ui.html
 
-### "Connection refused" ή database errors:
+## 🚨 Αντιμετώπιση Κοινών Προβλημάτων
+
+### ❌ "Cannot connect to the Docker daemon"
+**Αιτία:** Το Docker Desktop δεν τρέχει
+
+**Λύση:**
+1. **Ανοίξτε το Docker Desktop**
+2. **Περιμένετε** μέχρι να εμφανιστεί "Docker Desktop is running"
+3. **Δοκιμάστε ξανά:** `docker --version`
+
+### ❌ "Connection refused" ή database errors
+**Αιτία:** Η MySQL δεν έχει ξεκινήσει ακόμα
+
+**Λύση:**
 ```bash
-# Ελέγξτε αν τρέχει η MySQL
+# Ελέγξτε την κατάσταση
 docker ps
 
-# Επανεκκίνηση αν χρειάζεται
-docker-compose restart
+# Αν δεν βλέπετε mysql-recipes, ξεκινήστε ξανά
+docker-compose up -d
 
-# Δείτε τα logs της βάσης
-docker logs mysql-recipes
+# Περιμένετε και δείτε τα logs
+docker logs mysql-recipes -f
 ```
 
-### "Port already in use":
-```bash
-# Δείτε τι χρησιμοποιεί την θύρα 3307
-lsof -i :3307
+### ❌ "Port 3307 already in use"
+**Αιτία:** Άλλη MySQL instance χρησιμοποιεί τo port
 
-# Ή σταματήστε άλλες MySQL instances
+**Λύση:**
+```bash
+# Δείτε τι χρησιμοποιεί την port
+sudo lsof -i :3307
+
+# Σταματήστε άλλες MySQL instances
 sudo service mysql stop
+
+# Ή αλλάξτε τo port στο docker-compose.yml
+# "3308:3306" αντί για "3307:3306"
 ```
 
-### "Cannot resolve dependencies":
+### ❌ "Cannot resolve dependencies"
+**Λύση:**
 ```bash
-mvn clean install
+mvn clean install -U
 ```
+
+### ❌ Application.properties not found
+**Αιτία:** Δεν δημιουργήσατε το αρχείο
+
+**Λύση:** Δημιουργήστε το αρχείο `src/main/resources/application.properties` όπως στο Βήμα 3.2
+
+## ✅ Επιβεβαίωση Επιτυχούς Εκτέλεσης
+
+Η εφαρμογή λειτουργεί σωστά όταν:
+- ✅ `docker ps` δείχνει το `mysql-recipes` container
+- ✅ `mvn spring-boot:run` ξεκινάει χωρίς σφάλματα
+- ✅ `curl http://localhost:8080/api/recipes/all` επιστρέφει JSON
+- ✅ http://localhost:8080/swagger-ui.html είναι προσβάσιμο
 
 ## 📁 Δομή Project
 
@@ -89,8 +220,8 @@ mvn clean install
 src/
 ├── main/
 │   ├── java/.../
-|   |   ├── config/          #Configuration files
-│   │   ├── controllers/     # REST API Controllers
+|   |   ├── config/         #Configuration files
+│   │   ├── controllers/    # REST API Controllers
 │   │   ├── dtos/           # Data Transfer Objects  
 │   │   ├── entities/       # Database Entities
 │   │   ├── enums/          # Enumerations
@@ -100,26 +231,16 @@ src/
 │   │   └── exceptions/     # Custom Exceptions
 │   └── resources/
 │       └── application.properties # Ρυθμίσεις εφαρμογής
-│       └── database_migration
-│   │    |  ├── database.sql    # Δειγματικά δεδομένα
 ├── docker-compose.yml      # Ρυθμίσεις image MySQL
+├── sample_data_simple.sql  # Φορτώνει στη βάση δεδομένων δειγματικά δεδομένα κατά την πρώτη εκκίνηση του Docker container
 ```
-
-##  Επιβεβαίωση Επιτυχούς Εκτέλεσης
-
-Η εφαρμογή λειτουργεί σωστά όταν:
-- ✅ Το `docker ps` δείχνει τον mysql-recipes container
-- ✅ Το `mvn spring-boot:run` ξεκινάει χωρίς σφάλματα
-- ✅ Το `curl http://localhost:8080/api/recipes/all` επιστρέφει JSON
-- ✅ Το Swagger UI είναι προσβάσιμο στο http://localhost:8080/swagger-ui.html
-
 
 ## Προβλήματα
 
 Αν αντιμετωπίζετε προβλήματα, ελέγξτε:
 1. Τα logs της εφαρμογής στο terminal
 2. Τα logs της MySQL: `docker logs mysql-recipes`
-3. Ότι οι θύρες 8080 και 3307 είναι ελεύθερες
+3. Ότι οι θύρες 8080(Java Spring Boot) και 3307(MySQL) είναι ελεύθερες
 
 ---
 
@@ -253,59 +374,60 @@ wsl --update
 
 ## 📚 API Documentation
 
-This project includes interactive API documentation using OpenAPI 3.0 (Swagger).
+Αυτό το project εμπεριέχει διαδραστικό API documentation χρησιμοποιώντας OpenAPI 3.0 (Swagger).
 
-### Accessing the Documentation
+### Πρόσβαση στο Documentation
 
-After starting the application, you can access the API documentation at:
+Αφού εκκινήσετε τον server, αποκτάτε πρόσβαση στο API documentation στα:
 
-- **Swagger UI (Interactive)**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **Swagger UI (Διαδραστικό)**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 - **OpenAPI JSON Spec**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
-### Features
+### Χαρακτηριστικά
 
-- **Interactive Documentation** - Test endpoints directly from the browser
-- **Search and Filter** - Find specific endpoints quickly
-- **Request/Response Examples** - See expected data formats
+- **Διαδραστικότητα** - Ελέγχετε endpoints απευθείας από τον browser
+- **Search and Filter** - Βρίσκετε συγκεκριμένα endpoints γρήγορα
+- **Request/Response Παραδείγματα** - Βλέπετε τις αναμενόμενες μορφές δεδομένων
 
-### How to Use
+### Χρήση
 
-1. **Start the application**:
+1. **Εκκινήστε τον server**:
 ```bash
    mvn spring-boot:run
 ```
 
-2. **Open your browser** and navigate to the Swagger UI:
+2. **Aνοίξτε τον browser** και πλοηγηθείτε στο Swagger UI:
 ```
    http://localhost:8080/swagger-ui.html
 ```
 
-3. **Explore the endpoints** organized by categories:
-   - **Ingredients** - Manage recipe ingredients
-   - **Recipes** - CRUD operations for recipes
-   - **Recipe Execution** - Cook and track recipe progress
-   - **Photos** - Upload and manage images
+3. **Ανακαλύψτε τα endpoints** σε κατηγορίες:
+   - **Ingredients** - Διαχείριση υλικών συνταγής
+   - **Recipes** - CRUD operations για συνταγές
+   - **Recipe Execution** - Μαγείρεμα σε βήματα και έλεγχος προοόδου με βάση τον χρόνο εκτέλεσης
+   - **Photos** - Ανεβάστε και διαχειριστείτε φωτογραφίες
+   - **Steps** - CRUD operations για βήματα συνταγής
 
 4. **Test endpoints**:
-   - Click on any endpoint to expand it
+   - Click σε οποιοδόποτε endpoint και expand 
    - Click **"Try it out"**
-   - Fill in required parameters
-   - Click **"Execute"** to make a real API call
-   - View the response in real-time
+   - Συμπληρώστε τις απαιτούμενες παραμέτρους
+   - Click **"Execute"** για να κάνετε μια κλήση API
+   - Δείτε το response σε παργματικό χρόνο
 
-### Example API Calls
+### Παραδείγματα API κλήσεων
 
-#### Get All Recipes
+#### Ανάκτηση όλων των Recipes
 ```http
 GET /api/recipes/all
 ```
 
-#### Start Recipe Execution
+#### Έναρξη Recipe Execution
 ```http
 POST /api/recipe-execution/start?recipeId=1
 ```
 
-#### Upload Photo for Recipe
+#### Ανεβάστε Photo για Recipe
 ```http
 POST /api/photos/recipe/upload
 Content-Type: multipart/form-data
@@ -313,7 +435,7 @@ Content-Type: multipart/form-data
 
 ### API Groups
 
-The documentation is organized into the following groups:
+Υπάρχουν σε κατηγορίες τα εξής groups:
 - **Ingredients API** - `/api/ingredients/**`
 - **Recipes API** - `/api/recipes/**` 
 - **Recipe Execution API** - `/api/recipe-execution/**`
@@ -321,14 +443,6 @@ The documentation is organized into the following groups:
 - **Steps API** - `/api/steps/**`
 - **Recipe Ingredients API** - `/api/recipe-ingredients/**`
 - **Step Ingredients API** - `/api/step-ingredients/**`
-
-### For Developers
-
-If you're integrating with this API:
-- Use the **OpenAPI JSON** spec for code generation
-- All endpoints return JSON responses
-- CORS is configured for development
-
 ---
 
 # 🔒Validation
@@ -370,7 +484,7 @@ If you're integrating with this API:
 
 ## Test Validation:
 
-Send invalid data to see validation errors:
+Στείλτε λανθασμένα δεδομένα για να δείτε τα validation errors:
 
 ```bash
 curl -X POST http://localhost:8080/api/recipes \
@@ -382,7 +496,7 @@ curl -X POST http://localhost:8080/api/recipes \
   }'
 ```
 
-This will trigger validation errors for the invalid fields.
+Αυτό θα καταλήξει σε validation errors για τα άκυρα πεδία.
 
 # 🔴Error Handling
 
