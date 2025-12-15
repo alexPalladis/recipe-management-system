@@ -29,7 +29,7 @@ public class RecipeController {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new stepIngredient")
+    @Operation(summary = "Create a new recipe")
     @ApiResponse(responseCode = "200", description = "Recipe created successfully")
     public ResponseEntity<RecipeDto> createRecipe(@Valid @RequestBody RecipeDto recipeDto) {
         RecipeDto createdRecipe = recipeService.createRecipe(recipeDto);
