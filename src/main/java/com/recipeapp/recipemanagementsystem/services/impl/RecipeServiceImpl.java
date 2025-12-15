@@ -121,6 +121,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeMapper.toDTO(recipe);
     }
     //TODO:
+    // protasi
     // @Override
     // @Transactional(readOnly = true)
     // public List<RecipeDto> findByIngredientName(String ingredientName) {
