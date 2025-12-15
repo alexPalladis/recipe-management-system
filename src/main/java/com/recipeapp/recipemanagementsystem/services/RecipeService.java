@@ -16,10 +16,13 @@ public interface RecipeService {
     RecipeDto findById(Long id);
     List<RecipeDto> findAll();
 
+
     // Search functionality
     List<RecipeDto> searchByName(String name);
     List<RecipeDto> findByCategory(RecipeCategory category);
     List<RecipeDto> findByDifficulty(Difficulty difficulty);
+    //TODO:
+    // List<RecipeDto> findByIngredientName(String ingredientName);
 
     // Recipe with steps
     RecipeDto findByIdWithSteps(Long id);

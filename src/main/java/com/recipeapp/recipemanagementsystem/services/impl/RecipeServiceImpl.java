@@ -120,4 +120,13 @@ public class RecipeServiceImpl implements RecipeService {
                 .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
         return recipeMapper.toDTO(recipe);
     }
+    //TODO:
+    // @Override
+    // @Transactional(readOnly = true)
+    // public List<RecipeDto> findByIngredientName(String ingredientName) {
+    //      List<Recipe> recipes = recipeRepository.findAllByIngredientName(ingredientName);
+    //      return recipes.stream()
+    //                    .map(recipeMapper::toDTO)
+    //                    .collect(Collectors.toList());
+    // }
 }
