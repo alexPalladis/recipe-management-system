@@ -55,7 +55,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findTopRecent(@Param("limit") int limit);
 
     //TODO:
-    // @Query("SELECT DISTINCT r FROM Recipe r JOIN r.recipeIngredients ri JOIN ri.ingredient i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    // @Query("SELECT DISTINCT r FROM Recipe r JOIN r.recipeIngredients ri JOIN ri.ingredient i
+    // WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     // List<Recipe> findAllByIngredientName(@Param("name") String name);
 
 }
