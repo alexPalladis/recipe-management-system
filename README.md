@@ -17,7 +17,34 @@ git clone https://github.com/alexPalladis/recipe-management-system.git
 cd recipe-management-system
 ```
 
-### Βήμα 2: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
+### Βήμα 2: Δημιουργία αρχείων ρυθμίσεων από τα examples
+**Τα παρακάτω αρχεία δεν υπάρχουν στο repo για να μην εκτεθούν credentials. Πρέπει να δημιουργηθούν από τα αντίστοιχα .example.**
+
+- Δημιουργία docker-compose.yml
+```bash
+cp docker-compose.yml.example docker-compose.yml
+```
+
+- Δημιουργία application.properties
+```bash
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+```
+
+- Δημιουργία .env
+```bash
+cp .env.example .env
+```
+
+### Βήμα 3: Ρύθμιση credentials
+- Επεξεργαστείτε το .env με τα credentials σας:
+```bash
+MYSQL_ROOT_PASSWORD=your_database_password
+MYSQL_DATABASE=recipesdb
+SPRING_DATASOURCE_USERNAME=your_db_username
+SPRING_DATASOURCE_PASSWORD=your_db_password
+```
+
+### Βήμα 4: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
 **ΠΡΟΣΟΧΗ: Αυτό το βήμα είναι ΥΠΟΧΡΕΩΤΙΚΟ!!**
 **Σε περίπτωση που δεν έχετε το Docker εγκατεστημένο, θα βρείτε σχετικές οδηγίες παρακάτω σε επόμενο κεφάλαιο.**
 
@@ -40,12 +67,16 @@ sudo systemctl start docker
 sudo systemctl status docker
 ```
 
-### Βήμα 3: Εκκίνηση Backend + Database
+### Βήμα 5: Εκκίνηση Backend + Database
 - **Στο Terminal του root folder**
 ```bash
 docker compose up --build
 ```
 **Την πρώτη φορά ίσως χρειαστούν 2-3 λεπτά!**
+
+### Πρόσβαση
+- **Backend API: http://localhost:8080**
+- **Swagger UI: http://localhost:8080/swagger-ui.html**
 
 ---
 
@@ -82,7 +113,33 @@ git clone https://github.com/alexPalladis/recipe-management-system.git
 cd recipe-management-system
 ```
 
-### Βήμα 2: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
+### Βήμα 2: Δημιουργία αρχείων ρυθμίσεων από τα examples
+**Τα παρακάτω αρχεία δεν υπάρχουν στο repo για να μην εκτεθούν credentials. Πρέπει να δημιουργηθούν από τα αντίστοιχα .example.**
+
+- Δημιουργία docker-compose.yml
+```bash
+cp docker-compose.yml.example docker-compose.yml
+```
+
+- Δημιουργία application.properties
+```bash
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+```
+
+- Δημιουργία .env
+```bash
+cp .env.example .env
+```
+
+### Βήμα 3: Ρύθμιση credentials
+- Επεξεργαστείτε το .env με τα credentials σας:
+```bash
+MYSQL_ROOT_PASSWORD=your_database_password
+MYSQL_DATABASE=recipesdb
+SPRING_DATASOURCE_USERNAME=your_db_username
+SPRING_DATASOURCE_PASSWORD=your_db_password
+
+### Βήμα 4: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
 **ΠΡΟΣΟΧΗ: Αυτό το βήμα είναι ΥΠΟΧΡΕΩΤΙΚΟ!!**
 **Σε περίπτωση που δεν έχετε το Docker εγκατεστημένο, θα βρείτε σχετικές οδηγίες παρακάτω σε επόμενο κεφάλαιο.**
 
@@ -112,68 +169,11 @@ docker --version
 docker-compose --version
 ```
 
-### Βήμα 3: Δημιουργία Απαραίτητων Αρχείων Ρυθμίσεων
-
-**ΚΡΙΣΙΜΟ:** Αυτά τα αρχεία λείπουν επίτηδες από το repository για λόγους ασφαλείας!Γ' αυτό το λόγο υπάρχουν τα examples τους(application.properties.example και docker-compose.yml.example)
-
-#### 3.1 Δημιουργία docker-compose.yml
-**Δημιουργήστε** το αρχείο `docker-compose.yml` στoν root folder του project και επεξεργαστείτε μόνο τον κωδικό σας(< YOUR PASSWORD >):
-
-```yaml
-services:
-  db:
-    image: mysql:8.0
-    container_name: mysql-recipes
-    environment:
-      MYSQL_ROOT_PASSWORD: <ΥΟUR PASSWORD>
-      MYSQL_DATABASE: recipesdb
-      MYSQL_CHARACTER_SET_SERVER: utf8mb4
-      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password --init-connect='SET NAMES utf8mb4'
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./sample_data_simple.sql:/docker-entrypoint-initdb.d/01-init.sql
-    restart: unless-stopped
-
-volumes:
-  mysql_data:
-```
-
-#### 3.2 Δημιουργία application.properties
-**Δημιουργήστε** το αρχείο `src/main/resources/application.properties ( όπως το appilaction.properties.example ) και επεξεργαστείτε μόνο τα πεδία < YOUR_USERNAME > και < YOUR PASSWORD >`:
-
-```properties
-# Application Configuration
-spring.application.name=Recipe Management System
-server.port=8080
-
-# Database Configuration
-spring.datasource.url=jdbc:mysql://localhost:3307/recipesdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
-spring.datasource.username=< YOUR_USERNAME >
-spring.datasource.password=< YOUR PASSWORD >
-
-# JPA/Hibernate Configuration
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
-
-# JSON Configuration
-spring.jackson.serialization.fail-on-empty-beans=false
-spring.jackson.default-property-inclusion=NON_NULL
-
-# Logging Configuration
-logging.level.com.recipeapp=DEBUG
-logging.level.org.springframework.web=DEBUG
-logging.level.org.hibernate.SQL=DEBUG
-```
-
 ### Βήμα 4: Εκκίνηση Βάσης Δεδομένων
 ```bash
 # Ξεκινήστε τη MySQL με Docker Compose από το terminal του ΙDE στον root folder
-docker-compose up -d
+docker compose up -d db
+
 
 # Επιβεβαιώστε ότι τρέχει
 docker ps
