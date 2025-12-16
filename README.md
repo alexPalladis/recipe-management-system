@@ -4,12 +4,77 @@
 
 ## 📋 Απαιτήσεις Συστήματος
 
-- **Java 17** 
-- **Maven 3.9**
 - **Docker Desktop** (για Windows/Mac) ή **Docker Engine** (για Linux)
 - **Git**
+- **Java 17 και Maven 3.9 ΔΕΝ απαιτούνται για την εκτέλεση της εφαρμογής (χρησιμοποιούνται μόνο για development).**
 
-## 🚀 Οδηγίες Εκτέλεσης
+
+## 🚀 Οδηγίες Εκτέλεσης(Συνιστάται με Docker)
+
+### Βήμα 1: Αντιγραφή του Repository
+```bash
+git clone https://github.com/alexPalladis/recipe-management-system.git
+cd recipe-management-system
+```
+
+### Βήμα 2: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
+**ΠΡΟΣΟΧΗ: Αυτό το βήμα είναι ΥΠΟΧΡΕΩΤΙΚΟ!!**
+**Σε περίπτωση που δεν έχετε το Docker εγκατεστημένο, θα βρείτε σχετικές οδηγίες παρακάτω σε επόμενο κεφάλαιο.**
+
+#### Για Windows:
+1. **Ανοίξτε το Docker Desktop** από το Start Menu
+2. **Περιμένετε** μέχρι να εμφανιστεί το πράσινο εικονίδιο στο system tray
+3. **Επιβεβαιώστε** ότι είναι ενεργό: το Docker Desktop δείχνει "Docker Desktop is running"
+
+#### Για Mac:
+1. **Ανοίξτε το Docker Desktop** από το Applications folder
+2. **Περιμένετε** μέχρι το εικονίδιο στη μπάρα menu να γίνει πράσινο
+3. **Επιβεβαιώστε**: Κλικ στο εικονίδιο → "Docker Desktop is running"
+
+#### Για Linux:
+```bash
+# Ξεκινήστε την υπηρεσία Docker
+sudo systemctl start docker
+
+# Επιβεβαιώστε ότι τρέχει
+sudo systemctl status docker
+```
+
+### Βήμα 3: Εκκίνηση Backend + Database
+- **Στο Terminal του root folder**
+```bash
+docker compose up --build
+```
+**Την πρώτη φορά ίσως χρειαστούν 2-3 λεπτά!**
+
+---
+
+## 🛑 Διαχείριση Containers
+
+### Τερματισμός Εφαρμογής
+```bash
+docker compose down
+```
+
+### Επανεκκίνηση μετά από νέο pull
+```bash
+git pull
+docker compose up --build
+```
+
+### Πλήρες reset βάσης δεδομένων
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+---
+## 🧑‍💻 Local Development (προαιρετικό) - Μόνο η βάση δεδομένων σε Container
+
+# 📋 Απαιτήσεις Συστήματος
+- **Git**
+- **Docker Desktop** (για Windows/Mac) ή **Docker Engine** (για Linux)
+- **Java 17 και Maven 3.9**
 
 ### Βήμα 1: Αντιγραφή του Repository
 ```bash
