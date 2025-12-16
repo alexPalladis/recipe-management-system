@@ -1,6 +1,7 @@
-# Sensitive configuration files - ΠΡΩΤΑ στη λίστα!
+# Sensitive configuration files
 application.properties
 docker-compose.yml
+.env
 
 HELP.md
 target/
