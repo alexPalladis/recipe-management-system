@@ -1,6 +1,4 @@
 # Sensitive configuration files
-application.properties
-docker-compose.yml
 .env
 
 HELP.md
