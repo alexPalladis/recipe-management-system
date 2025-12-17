@@ -18,17 +18,7 @@ cd recipe-management-system
 ```
 
 ### Βήμα 2: Δημιουργία αρχείων ρυθμίσεων από τα examples
-**Τα παρακάτω αρχεία δεν υπάρχουν στο repo για να μην εκτεθούν credentials. Πρέπει να δημιουργηθούν από τα αντίστοιχα .example.**
-
-- Δημιουργία docker-compose.yml
-```bash
-cp docker-compose.yml.example docker-compose.yml
-```
-
-- Δημιουργία application.properties
-```bash
-cp src/main/resources/application.properties.example src/main/resources/application.properties
-```
+**Το παρακάτω αρχείο δεν υπάρχει στο repo για να μην εκτεθούν credentials. Πρέπει να δημιουργηθεί από εσάς όπως το .env.example**
 
 - Δημιουργία .env
 ```bash
