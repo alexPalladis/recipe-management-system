@@ -1,4 +1,3 @@
 ﻿# Resources folder for Spring Boot
 
- ### Εδώ δημιουργούμε application.properties όπως το application.properties.example
 
