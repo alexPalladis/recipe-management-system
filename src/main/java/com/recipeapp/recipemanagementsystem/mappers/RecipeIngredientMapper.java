@@ -11,8 +11,8 @@ public interface RecipeIngredientMapper {
     @Mapping(source = "ingredient.id", target = "ingredientId")
     RecipeIngredientDto toDto(RecipeIngredient recipeIngredient);
 
-    @Mapping(target = "recipe", ignore = true)
-    @Mapping(target = "ingredient", ignore = true)
-    @Mapping(target = "id", ignore = true)
+
+    @Mapping(source = "recipeId", target = "recipe.id")
+    @Mapping(source = "ingredientId", target = "ingredient.id")
     RecipeIngredient toEntity(RecipeIngredientDto recipeIngredientDto);
 }
