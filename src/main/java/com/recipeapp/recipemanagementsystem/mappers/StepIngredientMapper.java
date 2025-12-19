@@ -12,7 +12,8 @@ public interface StepIngredientMapper {
     @Mapping(source = "ingredient.id", target = "ingredientId")
     StepIngredientDto toDto(StepIngredient stepIngredient);
 
-    @Mapping(source = "stepId", target = "step.id")
-    @Mapping(source = "ingredientId", target = "ingredient.id")
+    @Mapping(target = "step", ignore = true)
+    @Mapping(target = "ingredient", ignore = true)
+    @Mapping(target = "id", ignore = true)
     StepIngredient toEntity(StepIngredientDto stepIngredientDto);
 }

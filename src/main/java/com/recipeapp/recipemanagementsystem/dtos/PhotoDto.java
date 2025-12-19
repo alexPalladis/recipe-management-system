@@ -21,6 +21,9 @@ public class PhotoDto {
     @Size(max = 200, message = "Η περιγραφή δεν μπορεί να υπερβαίνει τους 200 χαρακτήρες")
     private String description;
 
+    private Long recipeId;
+    private Long stepId;
+
     public PhotoDto() {}
 
     // Getters
@@ -36,4 +39,20 @@ public class PhotoDto {
     public void setMimeType(String mimeType) { this.mimeType = mimeType; }
     public void setImageData(byte[] imageData) { this.imageData = imageData; }
     public void setDescription(String description) { this.description = description; }
+
+    public Long getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(Long recipeId) {
+        this.recipeId = recipeId;
+    }
+
+    public Long getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(Long stepId) {
+        this.stepId = stepId;
+    }
 }

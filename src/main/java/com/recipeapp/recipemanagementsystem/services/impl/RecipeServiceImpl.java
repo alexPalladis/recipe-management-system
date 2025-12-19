@@ -1,16 +1,15 @@
 package com.recipeapp.recipemanagementsystem.services.impl;
 
-import com.recipeapp.recipemanagementsystem.dtos.RecipeDto;
-import com.recipeapp.recipemanagementsystem.dtos.RecipeIngredientDto;
-import com.recipeapp.recipemanagementsystem.entities.Recipe;
-import com.recipeapp.recipemanagementsystem.entities.Ingredient;
-import com.recipeapp.recipemanagementsystem.entities.RecipeIngredient;
+import com.recipeapp.recipemanagementsystem.dtos.*;
+import com.recipeapp.recipemanagementsystem.entities.*;
 import com.recipeapp.recipemanagementsystem.enums.Difficulty;
 import com.recipeapp.recipemanagementsystem.enums.MeasurementUnit;
 import com.recipeapp.recipemanagementsystem.enums.RecipeCategory;
 import com.recipeapp.recipemanagementsystem.mappers.RecipeMapper;
-import com.recipeapp.recipemanagementsystem.repositories.RecipeRepository;
-import com.recipeapp.recipemanagementsystem.services.RecipeService;
+import com.recipeapp.recipemanagementsystem.mappers.StepIngredientMapper;
+import com.recipeapp.recipemanagementsystem.mappers.StepMapper;
+import com.recipeapp.recipemanagementsystem.repositories.*;
+import com.recipeapp.recipemanagementsystem.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,25 +24,71 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepository;
     private final RecipeMapper recipeMapper;
+    private final RecipeIngredientService recipeIngredientService;
+    private final StepService stepService;
+    private final StepIngredientService stepIngredientService;
+
 
     @Autowired
     public RecipeServiceImpl(RecipeRepository recipeRepository,
-                             RecipeMapper recipeMapper) {
+                             RecipeMapper recipeMapper,
+                             RecipeIngredientService recipeIngredientService,
+                             StepService stepService,
+                             StepIngredientService stepIngredientService) {
         this.recipeRepository = recipeRepository;
         this.recipeMapper = recipeMapper;
+        this.recipeIngredientService = recipeIngredientService;
+        this.stepService = stepService;
+        this.stepIngredientService = stepIngredientService;
     }
 
+
     @Override
+    @Transactional
     public RecipeDto createRecipe(RecipeDto recipeDto) {
-        Recipe recipe = recipeMapper.toEntity(recipeDto);
-        if (recipe.getCreatedAt() == null) {
-            recipe.setCreatedAt(LocalDateTime.now());
-        }
-        if (recipe.getUpdatedAt() == null) {
-            recipe.setUpdatedAt(LocalDateTime.now());
-        }
+        Recipe recipe = new Recipe();
+
+        recipe.setName(recipeDto.getName());
+        recipe.setDifficulty(recipeDto.getDifficulty());
+        recipe.setTotalDuration(recipeDto.getTotalDuration());
+        recipe.setCategory(recipeDto.getCategory());
+        recipe.setDescription(recipeDto.getDescription());
+        recipe.setCreatedAt(LocalDateTime.now());
+        recipe.setUpdatedAt(LocalDateTime.now());
+
         Recipe savedRecipe = recipeRepository.save(recipe);
-        return recipeMapper.toDTO(savedRecipe);
+        Long recipeId = savedRecipe.getId();
+
+        try {
+            if (recipeDto.getRecipeIngredients() != null && !recipeDto.getRecipeIngredients().isEmpty()) {
+                for (RecipeIngredientDto ingredientDto : recipeDto.getRecipeIngredients()) {
+                    ingredientDto.setRecipeId(recipeId);
+                    recipeIngredientService.createRecipeIngredient(ingredientDto);
+                }
+            }
+
+            if (recipeDto.getSteps() != null && !recipeDto.getSteps().isEmpty()) {
+                for (StepDto stepDto : recipeDto.getSteps()) {
+                    stepDto.setRecipeId(recipeId);
+                    StepDto createdStep = stepService.createStep(stepDto);
+
+                    if (stepDto.getStepIngredients() != null && !stepDto.getStepIngredients().isEmpty()) {
+                        for (StepIngredientDto stepIngredientDto : stepDto.getStepIngredients()) {
+                            stepIngredientDto.setStepId(createdStep.getId());
+                             stepIngredientService.createStepIngredient(stepIngredientDto);
+                        }
+                    }
+                }
+            }
+
+            Recipe completeRecipe = recipeRepository.findById(recipeId)
+                    .orElseThrow(() -> new RuntimeException("Recipe not found after creation"));
+
+            return recipeMapper.toDTO(completeRecipe);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create recipe: " + e.getMessage(), e);
+        }
     }
 
     @Override

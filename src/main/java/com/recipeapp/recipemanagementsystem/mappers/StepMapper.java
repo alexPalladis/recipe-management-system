@@ -11,6 +11,9 @@ public interface StepMapper {
     @Mapping(source = "recipe.id", target = "recipeId")
     StepDto toDTO(Step step);
 
-    @Mapping(source = "recipeId", target = "recipe.id")
+    @Mapping(target = "recipe", ignore = true)
+    @Mapping(target = "stepIngredients", ignore = true)
+    @Mapping(target = "photos", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Step toEntity(StepDto stepDTO);
 }

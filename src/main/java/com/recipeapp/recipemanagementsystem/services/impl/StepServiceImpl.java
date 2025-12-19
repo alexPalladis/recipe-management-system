@@ -1,6 +1,7 @@
 package com.recipeapp.recipemanagementsystem.services.impl;
 
 import com.recipeapp.recipemanagementsystem.dtos.StepDto;
+import com.recipeapp.recipemanagementsystem.entities.Recipe;
 import com.recipeapp.recipemanagementsystem.entities.Step;
 import com.recipeapp.recipemanagementsystem.mappers.StepMapper;
 import com.recipeapp.recipemanagementsystem.repositories.RecipeRepository;
@@ -32,7 +33,13 @@ public class StepServiceImpl implements StepService {
 
     @Override
     public StepDto createStep(StepDto stepDto) {
+        Recipe recipe = recipeRepository.findById(stepDto.getRecipeId())
+                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + stepDto.getRecipeId()));
+
         Step step = stepMapper.toEntity(stepDto);
+
+        step.setRecipe(recipe);
+
         Step savedStep = stepRepository.save(step);
         return stepMapper.toDTO(savedStep);
     }
