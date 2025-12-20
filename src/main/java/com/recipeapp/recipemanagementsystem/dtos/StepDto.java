@@ -86,4 +86,12 @@ public class StepDto {
     public void setRecipeId(Long recipeId) {
         this.recipeId = recipeId;
     }
+
+    public void setStepIngredients(List<StepIngredientDto> stepIngredients) {
+        this.stepIngredients = stepIngredients;
+    }
+
+    public void setPhotos(List<PhotoDto> photos) {
+        this.photos = photos;
+    }
 }

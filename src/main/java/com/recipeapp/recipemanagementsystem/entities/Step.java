@@ -29,7 +29,7 @@ public class Step {
     @JoinColumn(name = "recipe_id", nullable = false)
     private Recipe recipe;
 
-    @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<StepIngredient> stepIngredients = new ArrayList<>();
 
     @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true)

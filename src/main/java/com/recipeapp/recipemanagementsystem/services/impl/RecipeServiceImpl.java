@@ -110,11 +110,25 @@ public class RecipeServiceImpl implements RecipeService {
                 }
             }
 
-            // Επιστροφή της πλήρους συνταγής
+
             Recipe completeRecipe = recipeRepository.findById(recipeId)
                     .orElseThrow(() -> new RuntimeException("Recipe not found after creation"));
 
-            return recipeMapper.toDTO(completeRecipe);
+            RecipeDto result = recipeMapper.toDTO(completeRecipe);
+
+
+            List<RecipeIngredientDto> savedIngredients = recipeIngredientService.findByRecipeId(recipeId);
+            result.setRecipeIngredients(savedIngredients);
+
+            List<StepDto> savedSteps = stepService.findByRecipeId(recipeId);
+
+            for (StepDto step : savedSteps) {
+                List<StepIngredientDto> stepIngredients = stepIngredientService.findByStepId(step.getId());
+                step.setStepIngredients(stepIngredients);
+            }
+            result.setSteps(savedSteps);
+
+            return result;
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to create recipe: " + e.getMessage(), e);
