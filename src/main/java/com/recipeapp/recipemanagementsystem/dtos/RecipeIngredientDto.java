@@ -8,11 +8,9 @@ import jakarta.validation.constraints.NotNull;
 public class RecipeIngredientDto {
 
     private Long id;
-    @NotNull(message = "Η ποσότητα είναι υποχρεωτική")
     @DecimalMin(value = "0.01", message = "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0")
     @DecimalMax(value = "10000.0", message = "Η ποσότητα δεν μπορεί να υπερβαίνει το 10000")
     private Double quantity;
-    @NotNull(message = "Η μονάδα μέτρησης είναι υποχρεωτική")
     private MeasurementUnit measurementUnit;
     @NotNull(message = "Το ID της συνταγής είναι υποχρεωτικό")
     private Long recipeId;
