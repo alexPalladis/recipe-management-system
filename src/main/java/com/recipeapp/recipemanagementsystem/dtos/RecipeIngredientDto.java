@@ -18,6 +18,7 @@ public class RecipeIngredientDto {
     private Long recipeId;
     @NotNull(message = "Το ID του υλικού είναι υποχρεωτικό")
     private Long ingredientId;
+    private String name;
 
     public RecipeIngredientDto() {}
 
@@ -25,11 +26,14 @@ public class RecipeIngredientDto {
     public Long getId() { return id; }
     public Double getQuantity() { return quantity; }
     public MeasurementUnit getMeasurementUnit() { return measurementUnit; }
+    public String getName() { return name; }
+    //EKANA PROSTHIKI EDW
 
     // Setters
     public void setId(Long id) { this.id = id; }
     public void setQuantity(Double quantity) { this.quantity = quantity; }
     public void setMeasurementUnit(MeasurementUnit measurementUnit) { this.measurementUnit = measurementUnit; }
+    public void setName(String name) { this.name = name; }
 
     public Long getRecipeId() {
         return recipeId;
