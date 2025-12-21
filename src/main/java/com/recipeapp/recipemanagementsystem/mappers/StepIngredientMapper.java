@@ -10,6 +10,7 @@ public interface StepIngredientMapper {
 
     @Mapping(source = "step.id", target = "stepId")
     @Mapping(source = "ingredient.id", target = "ingredientId")
+    @Mapping(source = "ingredient.name", target = "name") // <--- SOS: Η ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ
     StepIngredientDto toDto(StepIngredient stepIngredient);
 
     @Mapping(target = "step", ignore = true)

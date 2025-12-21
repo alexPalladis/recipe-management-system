@@ -8,40 +8,37 @@ import jakarta.validation.constraints.NotNull;
 public class StepIngredientDto {
 
     private Long id;
+
     @DecimalMin(value = "0.01", message = "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0")
     @DecimalMax(value = "10000.0", message = "Η ποσότητα δεν μπορεί να υπερβαίνει το 10000")
     private Double quantity;
+
     private MeasurementUnit measurementUnit;
+
     @NotNull(message = "Το ID του βήματος είναι υποχρεωτικό")
     private Long stepId;
+
     @NotNull(message = "Το ID του υλικού είναι υποχρεωτικό")
     private Long ingredientId;
 
+    // --- ΝΕΟ ΠΕΔΙΟ: Όνομα Υλικού ---
+    private String name;
+
     public StepIngredientDto() {}
 
-    // Getters
+    // --- Getters ---
     public Long getId() { return id; }
     public Double getQuantity() { return quantity; }
     public MeasurementUnit getMeasurementUnit() { return measurementUnit; }
+    public Long getStepId() { return stepId; }
+    public Long getIngredientId() { return ingredientId; }
+    public String getName() { return name; } // <--- ΝΕΟ
 
-    // Setters
+    // --- Setters ---
     public void setId(Long id) { this.id = id; }
     public void setQuantity(Double quantity) { this.quantity = quantity; }
     public void setMeasurementUnit(MeasurementUnit measurementUnit) { this.measurementUnit = measurementUnit; }
-
-    public Long getStepId() {
-        return stepId;
-    }
-
-    public void setStepId(Long stepId) {
-        this.stepId = stepId;
-    }
-
-    public Long getIngredientId() {
-        return ingredientId;
-    }
-
-    public void setIngredientId(Long ingredientId) {
-        this.ingredientId = ingredientId;
-    }
+    public void setStepId(Long stepId) { this.stepId = stepId; }
+    public void setIngredientId(Long ingredientId) { this.ingredientId = ingredientId; }
+    public void setName(String name) { this.name = name; } // <--- ΝΕΟ
 }

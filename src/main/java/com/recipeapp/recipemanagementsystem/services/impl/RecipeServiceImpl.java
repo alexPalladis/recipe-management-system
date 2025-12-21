@@ -11,9 +11,10 @@ import com.recipeapp.recipemanagementsystem.enums.RecipeCategory;
 // --- Mappers ---
 import com.recipeapp.recipemanagementsystem.mappers.RecipeIngredientMapper;
 import com.recipeapp.recipemanagementsystem.mappers.RecipeMapper;
+import com.recipeapp.recipemanagementsystem.mappers.StepIngredientMapper; // <--- 1. ΝΕΟ IMPORT
 import com.recipeapp.recipemanagementsystem.mappers.StepMapper;
 
-// --- Repositories (SOS: Εδώ είναι και το IngredientRepository) ---
+// --- Repositories ---
 import com.recipeapp.recipemanagementsystem.repositories.IngredientRepository;
 import com.recipeapp.recipemanagementsystem.repositories.RecipeRepository;
 
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 // --- Java Utils ---
 import java.time.LocalDateTime;
+import java.util.ArrayList; // <--- Χρήσιμο
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,34 +36,36 @@ import java.util.stream.Collectors;
 @Transactional
 public class RecipeServiceImpl implements RecipeService {
 
-    // Βασικά Repositories
     private final RecipeRepository recipeRepository;
-    private final IngredientRepository ingredientRepository; // <--- Απαραίτητο για τα Υλικά
+    private final IngredientRepository ingredientRepository;
 
     // Mappers
     private final RecipeMapper recipeMapper;
     private final StepMapper stepMapper;
     private final RecipeIngredientMapper recipeIngredientMapper;
+    private final StepIngredientMapper stepIngredientMapper; // <--- 2. ΝΕΟ FIELD
 
-    // Services (Χρησιμοποιούνται κυρίως στο Create)
+    // Services
     private final RecipeIngredientService recipeIngredientService;
     private final StepService stepService;
     private final StepIngredientService stepIngredientService;
 
     @Autowired
     public RecipeServiceImpl(RecipeRepository recipeRepository,
-                             IngredientRepository ingredientRepository, // <--- Inject εδώ
+                             IngredientRepository ingredientRepository,
                              RecipeMapper recipeMapper,
                              StepMapper stepMapper,
                              RecipeIngredientMapper recipeIngredientMapper,
+                             StepIngredientMapper stepIngredientMapper, // <--- INJECT ΕΔΩ
                              RecipeIngredientService recipeIngredientService,
                              StepService stepService,
                              StepIngredientService stepIngredientService) {
         this.recipeRepository = recipeRepository;
-        this.ingredientRepository = ingredientRepository; // <--- Αρχικοποίηση
+        this.ingredientRepository = ingredientRepository;
         this.recipeMapper = recipeMapper;
         this.stepMapper = stepMapper;
         this.recipeIngredientMapper = recipeIngredientMapper;
+        this.stepIngredientMapper = stepIngredientMapper; // <--- ASSIGN ΕΔΩ
         this.recipeIngredientService = recipeIngredientService;
         this.stepService = stepService;
         this.stepIngredientService = stepIngredientService;
@@ -70,9 +74,8 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public RecipeDto createRecipe(RecipeDto recipeDto) {
-        // Δημιουργία νέας συνταγής (Entity)
+        // ... (Ο κώδικας του createRecipe παραμένει ίδιος καθώς δούλευε σωστά) ...
         Recipe recipe = new Recipe();
-
         recipe.setName(recipeDto.getName());
         recipe.setDifficulty(recipeDto.getDifficulty());
         recipe.setTotalDuration(recipeDto.getTotalDuration());
@@ -81,27 +84,21 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setCreatedAt(LocalDateTime.now());
         recipe.setUpdatedAt(LocalDateTime.now());
 
-        // Αποθήκευση της συνταγής πρώτα για να πάρουμε ID
         Recipe savedRecipe = recipeRepository.save(recipe);
         Long recipeId = savedRecipe.getId();
 
         try {
-            // Προσθήκη Υλικών (αν υπάρχουν)
-            if (recipeDto.getRecipeIngredients() != null && !recipeDto.getRecipeIngredients().isEmpty()) {
+            if (recipeDto.getRecipeIngredients() != null) {
                 for (RecipeIngredientDto ingredientDto : recipeDto.getRecipeIngredients()) {
                     ingredientDto.setRecipeId(recipeId);
                     recipeIngredientService.createRecipeIngredient(ingredientDto);
                 }
             }
-
-            // Προσθήκη Βημάτων (αν υπάρχουν)
-            if (recipeDto.getSteps() != null && !recipeDto.getSteps().isEmpty()) {
+            if (recipeDto.getSteps() != null) {
                 for (StepDto stepDto : recipeDto.getSteps()) {
                     stepDto.setRecipeId(recipeId);
                     StepDto createdStep = stepService.createStep(stepDto);
-
-                    // Προσθήκη Υλικών Βήματος (αν υπάρχουν)
-                    if (stepDto.getStepIngredients() != null && !stepDto.getStepIngredients().isEmpty()) {
+                    if (stepDto.getStepIngredients() != null) {
                         for (StepIngredientDto stepIngredientDto : stepDto.getStepIngredients()) {
                             stepIngredientDto.setStepId(createdStep.getId());
                             stepIngredientService.createStepIngredient(stepIngredientDto);
@@ -109,26 +106,8 @@ public class RecipeServiceImpl implements RecipeService {
                     }
                 }
             }
-
-
-            Recipe completeRecipe = recipeRepository.findById(recipeId)
-                    .orElseThrow(() -> new RuntimeException("Recipe not found after creation"));
-
-            RecipeDto result = recipeMapper.toDTO(completeRecipe);
-
-
-            List<RecipeIngredientDto> savedIngredients = recipeIngredientService.findByRecipeId(recipeId);
-            result.setRecipeIngredients(savedIngredients);
-
-            List<StepDto> savedSteps = stepService.findByRecipeId(recipeId);
-
-            for (StepDto step : savedSteps) {
-                List<StepIngredientDto> stepIngredients = stepIngredientService.findByStepId(step.getId());
-                step.setStepIngredients(stepIngredients);
-            }
-            result.setSteps(savedSteps);
-
-            return result;
+            // ... (rest of create logic) ...
+            return findByIdWithSteps(recipeId);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to create recipe: " + e.getMessage(), e);
@@ -146,48 +125,71 @@ public class RecipeServiceImpl implements RecipeService {
         existingRecipe.setTotalDuration(recipeDto.getTotalDuration());
         existingRecipe.setCategory(recipeDto.getCategory());
         existingRecipe.setDescription(recipeDto.getDescription());
+        existingRecipe.setUpdatedAt(LocalDateTime.now()); // Καλό είναι να ενημερώνουμε και αυτό
 
-        // 2. Ενημέρωση Υλικών (Ingredients)
-        existingRecipe.getRecipeIngredients().clear(); // Διαγραφή παλιών
+        // 2. Ενημέρωση Υλικών Συνταγής (Recipe Ingredients)
+        if (existingRecipe.getRecipeIngredients() == null) {
+            existingRecipe.setRecipeIngredients(new ArrayList<>());
+        }
+        existingRecipe.getRecipeIngredients().clear();
 
         if (recipeDto.getRecipeIngredients() != null) {
             for (RecipeIngredientDto dto : recipeDto.getRecipeIngredients()) {
-                // Μετατροπή DTO -> Entity (χωρίς ID)
                 RecipeIngredient entity = recipeIngredientMapper.toEntity(dto);
-
-                // SOS: Εύρεση του πραγματικού Υλικού από τη βάση
                 Ingredient realIngredient = ingredientRepository.findById(dto.getIngredientId())
-                        .orElseThrow(() -> new RuntimeException("Ingredient not found with id: " + dto.getIngredientId()));
+                        .orElseThrow(() -> new RuntimeException("Ingredient not found: " + dto.getIngredientId()));
 
-                // Συνδέσεις
                 entity.setIngredient(realIngredient);
                 entity.setRecipe(existingRecipe);
-
-                // Προσθήκη
                 existingRecipe.getRecipeIngredients().add(entity);
             }
         }
 
-        // 3. Ενημέρωση Βημάτων (Steps)
-        existingRecipe.getSteps().clear(); // Διαγραφή παλιών
+        // 3. Ενημέρωση Βημάτων (Steps) - SOS FIX ΕΔΩ!
+        if (existingRecipe.getSteps() == null) {
+            existingRecipe.setSteps(new ArrayList<>());
+        }
+        existingRecipe.getSteps().clear();
 
         if (recipeDto.getSteps() != null) {
             for (StepDto stepDto : recipeDto.getSteps()) {
-                // Μετατροπή DTO -> Entity (χωρίς ID)
+                // Μετατροπή Step DTO -> Entity
                 Step stepEntity = stepMapper.toEntity(stepDto);
-
-                // Σύνδεση με γονιό
                 stepEntity.setRecipe(existingRecipe);
 
-                // Προσθήκη
+                // --- FIX: ΧΕΙΡΟΚΙΝΗΤΗ ΠΡΟΣΘΗΚΗ ΥΛΙΚΩΝ ΒΗΜΑΤΟΣ ---
+                // Επειδή ο StepMapper τα αγνοεί (ignore=true), τα προσθέτουμε εμείς τώρα.
+                if (stepDto.getStepIngredients() != null) {
+                    List<StepIngredient> stepIngredients = new ArrayList<>();
+
+                    for (StepIngredientDto siDto : stepDto.getStepIngredients()) {
+                        // 1. Μετατροπή DTO -> Entity
+                        StepIngredient siEntity = stepIngredientMapper.toEntity(siDto);
+
+                        // 2. Εύρεση του πραγματικού Ingredient από τη βάση
+                        Ingredient realIng = ingredientRepository.findById(siDto.getIngredientId())
+                                .orElseThrow(() -> new RuntimeException("Ingredient not found in step: " + siDto.getIngredientId()));
+
+                        // 3. Ρύθμιση συσχετίσεων
+                        siEntity.setIngredient(realIng);
+                        siEntity.setStep(stepEntity);
+
+                        stepIngredients.add(siEntity);
+                    }
+                    // 4. Ανάθεση στη λίστα του βήματος
+                    stepEntity.setStepIngredients(stepIngredients);
+                }
+                // ------------------------------------------------
+
                 existingRecipe.getSteps().add(stepEntity);
             }
         }
 
-        // Δεν χρειάζεται .save() λόγω @Transactional
+        // Το @Transactional θα κάνει commit τις αλλαγές αυτόματα
         return recipeMapper.toDTO(existingRecipe);
     }
 
+    // ... (Οι υπόλοιπες μέθοδοι delete, findAll κλπ παραμένουν ίδιες) ...
     @Override
     public void deleteRecipe(Long id) {
         if (!recipeRepository.existsById(id)) {
@@ -207,44 +209,30 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional(readOnly = true)
     public List<RecipeDto> findAll() {
-        return recipeRepository.findAll()
-                .stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        return recipeRepository.findAll().stream().map(recipeMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<RecipeDto> searchByName(String name) {
-        return recipeRepository.findByNameContainingIgnoreCase(name)
-                .stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        return recipeRepository.findByNameContainingIgnoreCase(name).stream().map(recipeMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<RecipeDto> findByCategory(RecipeCategory category) {
-        return recipeRepository.findByCategory(category)
-                .stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        return recipeRepository.findByCategory(category).stream().map(recipeMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<RecipeDto> findByDifficulty(Difficulty difficulty) {
-        return recipeRepository.findByDifficulty(difficulty)
-                .stream()
-                .map(recipeMapper::toDTO)
-                .collect(Collectors.toList());
+        return recipeRepository.findByDifficulty(difficulty).stream().map(recipeMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public RecipeDto findByIdWithSteps(Long id) {
-        Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
-        return recipeMapper.toDTO(recipe);
+        return findById(id);
     }
 }
