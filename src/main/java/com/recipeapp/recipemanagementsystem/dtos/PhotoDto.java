@@ -16,7 +16,7 @@ public class PhotoDto {
             message = "Ο τύπος MIME πρέπει να είναι έγκυρη μορφή εικόνας")
     private String mimeType;
     @NotNull(message = "Τα δεδομένα εικόνας είναι υποχρεωτικά")
-    @Size(min = 1, max = 52428800, message = "Τα δεδομένα εικόνας πρέπει να είναι μεταξύ 1 byte και 50MB")
+    @Size(min = 1, max = 10485760, message = "Τα δεδομένα εικόνας πρέπει να είναι μεταξύ 1 byte και 10MB")
     private byte[] imageData;
     @Size(max = 200, message = "Η περιγραφή δεν μπορεί να υπερβαίνει τους 200 χαρακτήρες")
     private String description;
