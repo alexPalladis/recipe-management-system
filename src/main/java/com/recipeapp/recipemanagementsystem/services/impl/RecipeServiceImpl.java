@@ -1,6 +1,5 @@
 package com.recipeapp.recipemanagementsystem.services.impl;
 
-// --- DTOs & Entities ---
 import com.recipeapp.recipemanagementsystem.dtos.*;
 import com.recipeapp.recipemanagementsystem.entities.*;
 
@@ -39,13 +38,11 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
 
-    // Mappers
     private final RecipeMapper recipeMapper;
     private final StepMapper stepMapper;
     private final RecipeIngredientMapper recipeIngredientMapper;
-    private final StepIngredientMapper stepIngredientMapper; // <--- 2. ΝΕΟ FIELD
+    private final StepIngredientMapper stepIngredientMapper;
 
-    // Services
     private final RecipeIngredientService recipeIngredientService;
     private final StepService stepService;
     private final StepIngredientService stepIngredientService;
@@ -56,7 +53,7 @@ public class RecipeServiceImpl implements RecipeService {
                              RecipeMapper recipeMapper,
                              StepMapper stepMapper,
                              RecipeIngredientMapper recipeIngredientMapper,
-                             StepIngredientMapper stepIngredientMapper, // <--- INJECT ΕΔΩ
+                             StepIngredientMapper stepIngredientMapper,
                              RecipeIngredientService recipeIngredientService,
                              StepService stepService,
                              StepIngredientService stepIngredientService) {
@@ -65,7 +62,7 @@ public class RecipeServiceImpl implements RecipeService {
         this.recipeMapper = recipeMapper;
         this.stepMapper = stepMapper;
         this.recipeIngredientMapper = recipeIngredientMapper;
-        this.stepIngredientMapper = stepIngredientMapper; // <--- ASSIGN ΕΔΩ
+        this.stepIngredientMapper = stepIngredientMapper;
         this.recipeIngredientService = recipeIngredientService;
         this.stepService = stepService;
         this.stepIngredientService = stepIngredientService;
@@ -74,7 +71,6 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public RecipeDto createRecipe(RecipeDto recipeDto) {
-        // ... (Ο κώδικας του createRecipe παραμένει ίδιος καθώς δούλευε σωστά) ...
         Recipe recipe = new Recipe();
         recipe.setName(recipeDto.getName());
         recipe.setDifficulty(recipeDto.getDifficulty());
@@ -107,7 +103,7 @@ public class RecipeServiceImpl implements RecipeService {
                 }
             }
 
-            Recipe completeRecipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RunTimeException("Recipe not found."));
+            Recipe completeRecipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RuntimeException("Recipe not found."));
 
             RecipeDto result = recipeMapper.toDTO(completeRecipe);
 
@@ -136,7 +132,6 @@ public class RecipeServiceImpl implements RecipeService {
         Recipe existingRecipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
 
-        // 1. Ενημέρωση Βασικών Πεδίων
         existingRecipe.setName(recipeDto.getName());
         existingRecipe.setDifficulty(recipeDto.getDifficulty());
         existingRecipe.setTotalDuration(recipeDto.getTotalDuration());
@@ -144,7 +139,6 @@ public class RecipeServiceImpl implements RecipeService {
         existingRecipe.setDescription(recipeDto.getDescription());
         existingRecipe.setUpdatedAt(LocalDateTime.now()); // Καλό είναι να ενημερώνουμε και αυτό
 
-        // 2. Ενημέρωση Υλικών Συνταγής (Recipe Ingredients)
         if (existingRecipe.getRecipeIngredients() == null) {
             existingRecipe.setRecipeIngredients(new ArrayList<>());
         }
@@ -162,7 +156,6 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
 
-        // 3. Ενημέρωση Βημάτων (Steps) - SOS FIX ΕΔΩ!
         if (existingRecipe.getSteps() == null) {
             existingRecipe.setSteps(new ArrayList<>());
         }
@@ -170,43 +163,36 @@ public class RecipeServiceImpl implements RecipeService {
 
         if (recipeDto.getSteps() != null) {
             for (StepDto stepDto : recipeDto.getSteps()) {
-                // Μετατροπή Step DTO -> Entity
+
                 Step stepEntity = stepMapper.toEntity(stepDto);
                 stepEntity.setRecipe(existingRecipe);
 
-                // --- FIX: ΧΕΙΡΟΚΙΝΗΤΗ ΠΡΟΣΘΗΚΗ ΥΛΙΚΩΝ ΒΗΜΑΤΟΣ ---
-                // Επειδή ο StepMapper τα αγνοεί (ignore=true), τα προσθέτουμε εμείς τώρα.
+
                 if (stepDto.getStepIngredients() != null) {
                     List<StepIngredient> stepIngredients = new ArrayList<>();
 
                     for (StepIngredientDto siDto : stepDto.getStepIngredients()) {
-                        // 1. Μετατροπή DTO -> Entity
+
                         StepIngredient siEntity = stepIngredientMapper.toEntity(siDto);
 
-                        // 2. Εύρεση του πραγματικού Ingredient από τη βάση
                         Ingredient realIng = ingredientRepository.findById(siDto.getIngredientId())
                                 .orElseThrow(() -> new RuntimeException("Ingredient not found in step: " + siDto.getIngredientId()));
 
-                        // 3. Ρύθμιση συσχετίσεων
                         siEntity.setIngredient(realIng);
                         siEntity.setStep(stepEntity);
 
                         stepIngredients.add(siEntity);
                     }
-                    // 4. Ανάθεση στη λίστα του βήματος
                     stepEntity.setStepIngredients(stepIngredients);
                 }
-                // ------------------------------------------------
 
                 existingRecipe.getSteps().add(stepEntity);
             }
         }
 
-        // Το @Transactional θα κάνει commit τις αλλαγές αυτόματα
         return recipeMapper.toDTO(existingRecipe);
     }
 
-    // ... (Οι υπόλοιπες μέθοδοι delete, findAll κλπ παραμένουν ίδιες) ...
     @Override
     public void deleteRecipe(Long id) {
         if (!recipeRepository.existsById(id)) {

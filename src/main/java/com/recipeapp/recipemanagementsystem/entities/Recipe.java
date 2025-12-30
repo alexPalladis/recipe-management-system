@@ -38,7 +38,6 @@ public class Recipe {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    // Relationships
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Step> steps = new ArrayList<>();
 
@@ -155,13 +154,11 @@ public class Recipe {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Update timestamp method
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // toString method
     @Override
     public String toString() {
         return "Recipe{" +

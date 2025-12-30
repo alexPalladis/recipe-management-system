@@ -25,9 +25,8 @@ public class RecipeExecutionServiceImpl implements RecipeExecutionService {
     private final RecipeMapper recipeMapper;
     private final StepMapper stepMapper;
 
-    // Απλά Maps για tracking
-    private final Map<Long, Long> activeExecutions = new HashMap<>(); // executionId -> recipeId
-    private final Map<Long, Set<Long>> completedSteps = new HashMap<>(); // executionId -> completedStepIds
+    private final Map<Long, Long> activeExecutions = new HashMap<>();
+    private final Map<Long, Set<Long>> completedSteps = new HashMap<>();
     private Long executionIdCounter = 1L;
 
     @Autowired
@@ -71,9 +70,6 @@ public class RecipeExecutionServiceImpl implements RecipeExecutionService {
         if (!activeExecutions.containsKey(executionId)) {
             throw new RuntimeException("Recipe execution not found with id: " + executionId);
         }
-        // Μπορούμε να αφαιρέσουμε από memory ή να το κρατήσουμε
-        // activeExecutions.remove(executionId);
-        // completedSteps.remove(executionId);
     }
 
     @Override
@@ -101,7 +97,6 @@ public class RecipeExecutionServiceImpl implements RecipeExecutionService {
                 return step.getStepOrder();
             }
         }
-        // Όλα τα βήματα ολοκληρώθηκαν
         return allSteps.isEmpty() ? 1 : allSteps.get(allSteps.size() - 1).getStepOrder() + 1;
     }
 

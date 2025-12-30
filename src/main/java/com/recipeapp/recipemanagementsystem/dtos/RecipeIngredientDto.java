@@ -25,7 +25,6 @@ public class RecipeIngredientDto {
     public Double getQuantity() { return quantity; }
     public MeasurementUnit getMeasurementUnit() { return measurementUnit; }
     public String getName() { return name; }
-    //EKANA PROSTHIKI EDW
 
     // Setters
     public void setId(Long id) { this.id = id; }

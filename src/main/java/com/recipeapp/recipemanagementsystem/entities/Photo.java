@@ -23,7 +23,6 @@ public class Photo {
     @Column(length = 500)
     private String description;
 
-    // Relationships - Μια φωτογραφία μπορεί να ανήκει είτε σε Recipe είτε σε Step
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
@@ -100,7 +99,6 @@ public class Photo {
         this.step = step;
     }
 
-    // toString method (χωρίς το imageData γιατί είναι μεγάλο)
     @Override
     public String toString() {
         return "Photo{" +

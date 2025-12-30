@@ -21,7 +21,6 @@ public class StepIngredientDto {
     @NotNull(message = "Το ID του υλικού είναι υποχρεωτικό")
     private Long ingredientId;
 
-    // --- ΝΕΟ ΠΕΔΙΟ: Όνομα Υλικού ---
     private String name;
 
     public StepIngredientDto() {}

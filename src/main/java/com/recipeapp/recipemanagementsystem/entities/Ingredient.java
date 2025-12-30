@@ -19,7 +19,6 @@ public class Ingredient {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Relationships
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 
@@ -75,7 +74,6 @@ public class Ingredient {
         this.stepIngredients = stepIngredients;
     }
 
-    // toString method
     @Override
     public String toString() {
         return "Ingredient{" +

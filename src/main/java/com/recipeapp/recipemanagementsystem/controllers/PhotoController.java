@@ -26,7 +26,7 @@ import java.util.Arrays;
 public class PhotoController {
 
     private final PhotoService photoService;
-    private static final long MAX_FILE_SIZE = 52428800; // 50MB
+    private static final long MAX_FILE_SIZE = 10485760; // 10MB
     private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList(
             "image/jpeg", "image/jpg", "image/png", "image/gif", "image/bmp", "image/webp"
     );
@@ -110,7 +110,7 @@ public class PhotoController {
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("Το μέγεθος του αρχείου δεν μπορεί να υπερβαίνει τα 50MB");
+            throw new IllegalArgumentException("Το μέγεθος του αρχείου δεν μπορεί να υπερβαίνει τα 10MB");
         }
 
         String contentType = file.getContentType();

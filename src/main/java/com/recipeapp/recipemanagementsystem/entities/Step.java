@@ -24,7 +24,6 @@ public class Step {
     @Column(nullable = false)
     private Integer duration;
 
-    // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
     private Recipe recipe;
@@ -35,10 +34,8 @@ public class Step {
     @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos = new ArrayList<>();
 
-    // Default constructor
     public Step() {}
 
-    // Constructor with main parameters
     public Step(String title, String description, Integer stepOrder, Integer duration) {
         this.title = title;
         this.description = description;
@@ -112,7 +109,6 @@ public class Step {
         this.photos = photos;
     }
 
-    // toString method
     @Override
     public String toString() {
         return "RecipeStep{" +

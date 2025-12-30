@@ -30,10 +30,8 @@ public class RecipeDto {
     private List<RecipeIngredientDto> recipeIngredients;
     private List<PhotoDto> photos;
 
-    // Default constructor
     public RecipeDto() {}
 
-    // Getters
     public Long getId() { return id; }
     public String getName() { return name; }
     public Difficulty getDifficulty() { return difficulty; }
@@ -46,7 +44,6 @@ public class RecipeDto {
     public List<RecipeIngredientDto> getRecipeIngredients() { return recipeIngredients; }
     public List<PhotoDto> getPhotos() { return photos; }
 
-    // Setters
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
     public void setDifficulty(Difficulty difficulty) { this.difficulty = difficulty; }

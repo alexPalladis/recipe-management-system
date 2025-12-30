@@ -18,7 +18,6 @@ public class StepIngredient {
     @Column(nullable = false)
     private MeasurementUnit measurementUnit;
 
-    // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "step_id", nullable = false)
     private Step step;
@@ -76,7 +75,6 @@ public class StepIngredient {
         this.ingredient = ingredient;
     }
 
-    // toString method
     @Override
     public String toString() {
         return "StepIngredient{" +
