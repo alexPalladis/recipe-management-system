@@ -26,12 +26,12 @@ cp .env.example .env
 ```
 
 ### Βήμα 3: Ρύθμιση credentials
-- Επεξεργαστείτε το .env με τα credentials σας:
+- Επεξεργαστείτε το .env με τα credentials σας για την τοπική βάση δεδομένων σας MySQL:
 ```bash
-MYSQL_ROOT_PASSWORD=your_database_password
+MYSQL_ROOT_PASSWORD=your_database_password_goes_here
 MYSQL_DATABASE=recipesdb
-SPRING_DATASOURCE_USERNAME=your_db_username
-SPRING_DATASOURCE_PASSWORD=your_db_password
+SPRING_DATASOURCE_USERNAME=your_db_username_goes_here
+SPRING_DATASOURCE_PASSWORD=your_db_password_goes_here
 ```
 
 ### Βήμα 4: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
