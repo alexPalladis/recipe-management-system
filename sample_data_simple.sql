@@ -1,5 +1,9 @@
-USE recipesdb;
+-- Δημιουργία βάσης δεδομένων
+CREATE DATABASE IF NOT EXISTS recipesdb
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
 
+USE recipesdb;
 
 CREATE TABLE IF NOT EXISTS ingredients (
 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -24,7 +28,7 @@ CREATE TABLE IF NOT EXISTS steps (
 id BIGINT AUTO_INCREMENT PRIMARY KEY,
 recipe_id BIGINT NOT NULL,
 step_order INT NOT NULL,
-title VARCHAR(200),
+title VARCHAR(150) NOT NULL,
 description TEXT,
 duration INT,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -322,6 +326,17 @@ SELECT COUNT(*) as ingredients_created FROM ingredients;
 SELECT COUNT(*) as recipes_created FROM recipes;
 SELECT COUNT(*) as steps_created FROM steps;
 SELECT COUNT(*) as recipe_ingredients_created FROM recipe_ingredients;
+
+-- Δημιουργία χρήστη εφαρμογής
+CREATE USER IF NOT EXISTS 'app_user'@'%' IDENTIFIED BY 'strong_password_here';
+
+-- Δικαιώματα χρήστη
+GRANT SELECT, INSERT, UPDATE, DELETE
+      ON recipesdb.*
+          TO 'app_user'@'%';
+
+FLUSH PRIVILEGES;
+
 
 
 
