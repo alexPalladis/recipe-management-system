@@ -30,8 +30,8 @@ cp .env.example .env
 ```bash
 MYSQL_ROOT_PASSWORD=your_database_password_goes_here
 MYSQL_DATABASE=recipesdb
-SPRING_DATASOURCE_USERNAME=your_db_username_goes_here
-SPRING_DATASOURCE_PASSWORD=your_db_password_goes_here
+SPRING_DATASOURCE_USERNAME=app_user  **Αυτό αφορά τον χρήστη εφαρμογής που έχουμε ορίσει στο .sql αρχείο, κανονικά είναι κρυφό**
+SPRING_DATASOURCE_PASSWORD=strong_password_here  **Αυτό αφορά τον χρήστη εφαρμογής που έχουμε ορίσει στο .sql αρχείο, κανονικά είναι κρυφό**
 ```
 
 ### Βήμα 4: ΣΗΜΑΝΤΙΚΟ - Εκκίνηση Docker Desktop 🐳
