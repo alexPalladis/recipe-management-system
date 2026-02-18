@@ -1,4 +1,5 @@
 # Sensitive configuration files
+# Won't show on push
 .env
 
 HELP.md
