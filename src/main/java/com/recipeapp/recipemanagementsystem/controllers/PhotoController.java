@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
 
+// photoController
 @RestController
 @RequestMapping("/api/photos")
 @Tag(name = "Photos", description = "Photos API")
